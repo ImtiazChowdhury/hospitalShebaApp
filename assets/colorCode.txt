@@ -1,0 +1,6 @@
+Gray Dark = #5d5d5d
+Gray Light = #b2b2b2
+
+Main Color = #359d9e
+
+Green = #55c595
