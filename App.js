@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Layout from "./layout/Layout";
+import TabLayout from './layout/TabLayout';
 
 export default function App() {
   return (
-    <Layout />
+    <TabLayout/>
   );
 }

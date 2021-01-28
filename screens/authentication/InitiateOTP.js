@@ -5,12 +5,15 @@ import ProgressSteps from "../../components/authentication/ProgressSteps";
 export const InitiateOTP = (props) => {
 
     const [phone, setPhone] = useState("");
+    
     function handleOnchange(e) {
         setPhone(e.target.value);
     }
+    
     function handleSubmit(e){
-
+        
     }
+
     return (
         <View style={style.body}>
             <ProgressSteps stage={2} />
