@@ -1,21 +1,28 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
-import InitiateOTP from "../screens/authentication/InitiateOTP";
-import VerifyOTP from "../screens/authentication/VerifyOTP";
-import Home from "../screens/Home/Home";
 import Services from "../screens/Services/Services";
+import HospitalList from "../screens/Services/HospitalList"
+import DoctorList from "../screens/Services/DoctorList"
+import TestList from "../screens/Services/TestList"
+
+
+import AppBar from "../components/AppBar"
 
 
 export const ServicesLayout = (props) => {
     const stack = createStackNavigator();
     return (
-        <stack.Navigator initialRouteName="Services" screenOptions={{
-            headerShown: false,
-            cardStyle: { backgroundColor: "#fff" }
-        }}>
-            
-            <stack.Screen name="Services" component={Services} />
+        <stack.Navigator initialRouteName="AllServices" screenOptions={{
+            cardStyle: { backgroundColor: "#fff" },
+            header: props=><AppBar {...props} />
+        }}> 
+            <stack.Screen name="AllServices" component={Services} options={{
+                title:"Services"
+            }}/>
+            <stack.Screen name="HospitalList" component={HospitalList} />
+            <stack.Screen name="DoctorList" component={DoctorList} />
+            <stack.Screen name="TestList" component={TestList} />
+
 
         </stack.Navigator>
     )

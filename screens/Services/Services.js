@@ -9,16 +9,16 @@ import NearestTest from "../../components/services/NearestTest";
 export const Services = (props) => {
 
     return (
-        <SafeAreaView >
 
             <ScrollView >
-                <InPageSearchBar />
-                <NearestHospital />
-                <NearestDoctor />
-                <NearestTest />
-
+                <InPageSearchBar {...props}/>
+                <NearestHospital {...props}/>
+                <NearestDoctor {...props}/>
+                <NearestTest {...props}/>
+                <View style={{height: 60}} >
+                    <Text>{/*:D */}</Text>    
+                </View> 
             </ScrollView>
-        </SafeAreaView>
     )
 }
 

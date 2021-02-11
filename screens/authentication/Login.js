@@ -5,27 +5,26 @@ import ProgressSteps from "../../components/authentication/ProgressSteps"
 import OverlayActivityIndicator from "../../components/OverlayActivityIndicator"
 import { baseUrl } from "../../config.json"
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Icon from "react-native-vector-icons/Ionicons"
 
-export const VerifyOTP = (props) => {
+export const Login = (props) => {
 
-    const [verificationCode, setVerificationCOde] = useState("")
+    const [phone, setPhone] = useState("")
+    const [password, setPassword] = useState("")
+
     const [loading, setLoading] = useState(false)
     const [inputError, setInputError] = useState({})
     const [infoBarVisible, setInfoBarVisible] = useState(false)
     const [infoBarText, setInfoBarText] = useState("")
-    const [OTPId, setOTPId] = useState("")
-    const [resentOTP, setResentOTP] = useState(false)
-    const [authToken, setAuthToken] = useState("") //for progressBar
+
 
     function handleSubmit(e) {
         RequestVerifyOTP()
     }
 
     useEffect(() => {
-        if (!props.route || !props.route.params || !props.route.params.OTP) {
-            props.navigation.goBack()
-        } else {
-            setOTPId(props.route.params.OTP._id)
+        if (!props.route || !props.route.params || !props.route.params.authToken) {
+            // props.navigation.goBack()
         }
     }, [props])
 
@@ -34,16 +33,13 @@ export const VerifyOTP = (props) => {
         try {
             setLoading(true)
 
-            const response = await fetch(baseUrl + '/api/register/verify', {
+            const response = await fetch(baseUrl + '/api/login', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    id: OTPId,
-                    verificationCode
-                })
+                body: JSON.stringify({phone, password})
 
             })
 
@@ -53,50 +49,12 @@ export const VerifyOTP = (props) => {
 
                 //signed in
                 try {
-                    AsyncStorage.setItem("authToken", OTP.authToken);
-                    props.navigation.navigate("SetInformation", {authToken: OTP.authToken})
-                    setAuthToken(OTP.authToken)
-                }catch(err){
-                    setInfoBarVisible(true);
+                    AsyncStorage.setItem("authToken", OTP.authToken)
+                    props.navigation.navigate("Profile")
+                } catch (err) {
+                    setInfoBarVisible(true)
                     setInfoBarText("Could not Store authentication data ")
                 }
-                
-            } else {
-                if (response.status >= 400 && response.status < 500) {
-                    const errorList = await response.json();
-                    console.log(errorList);
-                    setInputError(errorList)
-                } else if (response.status >= 500 && response.status < 600) {
-                    setInfoBarText("Could not process request!")
-                    setInfoBarVisible(true)
-                }
-            }
-            setLoading(false)
-
-        } catch (err) {
-            console.log(err)
-            setLoading(false)
-        }
-    }
-
-    async function requestResend() {
-        try {
-            setLoading(true)
-
-            const response = await fetch(baseUrl + '/api/register/initiate', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ phone: props.route.params.OTP.phone })
-            })
-
-            if (response.ok) {
-                const OTP = await response.json()
-                setInputError({})
-                setOTPId(OTP[0] && OTP[0]._id)
-                setResentOTP(true)
 
             } else {
                 if (response.status >= 400 && response.status < 500) {
@@ -115,6 +73,7 @@ export const VerifyOTP = (props) => {
     }
 
 
+
     return (
         <>
 
@@ -127,64 +86,61 @@ export const VerifyOTP = (props) => {
 
             {loading && <OverlayActivityIndicator />}
             <ScrollView style={style.body}>
-                <ProgressSteps stage={2} {...props} authToken={authToken}/>
 
                 <View style={style.headerContainer}>
-                    <Text style={style.heading}>Enter Code</Text>
-
+                    <Text style={style.heading}>Welcome Back</Text>
                 </View>
 
                 <View style={style.imageContainer}>
-                    <Image style={style.image} source={require("../../assets/enterOTP1.jpg")} />
+                    <Image style={style.image} source={require("../../assets/login1.jpg")} />
                 </View>
 
                 <Text style={style.subText}>
-                    Enter the 6 digit code we sent to {props.route?.params?.OTP?.phone}
+                    Log In To Your Account
                 </Text>
 
-                {!resentOTP &&
-                    <View style={style.resendTextContainer}>
-                        <Text style={style.resendText}>
-                            Didn't receive any code?
-                    </Text>
-                        <TouchableOpacity onPress={requestResend}>
-                            <Text style={style.link}> Resend</Text>
-                        </TouchableOpacity>
-                    </View>
-                }
-                {resentOTP &&
-                    <View style={style.resendTextContainer}>
-                        <Text style={style.resendText}>
-                            OTP was sent to your phone
-                        </Text>
-                    </View>
-                }
+                <View style={style.inputContainer}>
 
-                <View style={style.phoneNumberInputContainer}>
-
-                    <TextInput style={style.phoneNumberInput} value={verificationCode}
-                        onChangeText={text => setVerificationCOde(text)}
-                        placeholder="######" maxLength={6}
+                    <TextInput style={style.input} value={phone}
+                        onChangeText={text => setPhone(text)}
+                        placeholder="Phone number"
+                        maxLength={11}
                         keyboardType="numeric"
                     />
-                    <HelperText type="error" visible={inputError.verificationCode ? true : false} padding="none">
-                        {inputError.verificationCode}
-                    </HelperText>
+                    {inputError.userName &&
+                        <HelperText type="error" visible={inputError.userName ? true : false} padding="none">
+                            {inputError.userName}
+                        </HelperText>
+                    }
+                </View>
+               
+                <View style={style.inputContainer}>
+
+                    <TextInput style={style.input} value={password}
+                        onChangeText={text => setPassword(text)}
+                        placeholder="Password"
+                        maxLength={40}
+                    />
+                    {inputError.userName &&
+                        <HelperText type="error" visible={inputError.userName ? true : false} padding="none">
+                            {inputError.userName}
+                        </HelperText>
+                    }
                 </View>
 
                 <View style={style.submitButtonContainer}>
                     <TouchableOpacity onPress={handleSubmit}>
-                        <Text style={style.submitButton}>VERIFY</Text>
+                        <Text style={style.submitButton}>Login </Text>
                     </TouchableOpacity>
                 </View>
 
-
+                
                 <View style={style.infoTextContainer}>
                     <Text style={style.infoText}>
-                        Already have an account?
+                        Don't have an account?
                 </Text>
-                <TouchableOpacity onPress={()=>props.navigation.navigate("Login")}>
-                        <Text style={style.link}> Log In</Text>
+                <TouchableOpacity onPress={()=>props.navigation.navigate("InitiateOTP")}>
+                        <Text style={style.link}> Register</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -193,7 +149,7 @@ export const VerifyOTP = (props) => {
     )
 }
 
-export default VerifyOTP
+export default Login
 
 const style = StyleSheet.create({
     body: {
@@ -219,27 +175,41 @@ const style = StyleSheet.create({
         color: "#369d9e",
         fontFamily: "serif",
     },
+
+    heading2: {
+        fontSize: 22,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#5d5d5d",
+        fontFamily: "serif",
+        marginBottom: 20
+    },
     subText: {
         textAlign: "center",
         color: "#a1a1a1",
         marginTop: 5,
-        fontSize: 12
+        fontSize: 16,
+        marginTop: 20,
+        marginBottom: 20,
+        fontFamily:"serif"
     },
     headerContainer: {
         marginTop: 10,
     },
-    phoneNumberInput: {
-        fontSize: 25,
+    input: {
+        fontSize: 16,
         borderRadius: 4,
-        padding: 5,
+        padding: 8,
+        paddingLeft: 10,
+        paddingRight: 10,
         borderColor: "#369d9e",
         borderWidth: 1.5,
-        letterSpacing: 35,
-        color: "#5d5d5d"
+        color: "#5d5d5d",
+        fontFamily: "serif"
     },
-    phoneNumberInputContainer: {
-        marginTop: 20,
-        marginBottom: 10,
+    inputContainer: {
+        marginTop: 10,
+        marginBottom: 0,
     },
     phoneError: {
         marginLeft: 0
@@ -265,10 +235,12 @@ const style = StyleSheet.create({
         borderRadius: 5,
         color: "#fff",
         textAlign: "center",
-        padding: 5
+        padding: 5,
+        // fontFamily:"serif"
     },
     submitButtonContainer: {
-        marginTop: 0
+        marginTop: 20,
+        // marginBottom: 50
     },
     textCenter: {
         textAlign: "center"

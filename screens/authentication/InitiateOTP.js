@@ -1,143 +1,231 @@
-import React, { useEffect, useState } from "react";
-import { Button, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import ProgressSteps from "../../components/authentication/ProgressSteps";
+import React, { useEffect, useState } from "react"
+import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { HelperText, Snackbar } from "react-native-paper"
+import ProgressSteps from "../../components/authentication/ProgressSteps"
+import OverlayActivityIndicator from "../../components/OverlayActivityIndicator"
+import { baseUrl } from "../../config.json"
 
 export const InitiateOTP = (props) => {
 
-    const [phone, setPhone] = useState("");
-    
-    function handleOnchange(e) {
-        setPhone(e.target.value);
-    }
-    
-    function handleSubmit(e){
-        
-    }
+	const [phone, setPhone] = useState("")
+	const [loading, setLoading] = useState(false)
+	const [inputError, setInputError] = useState({})
+	const [infoBarVisible, setInfoBarVisible] = useState(false)
+	const [infoBarText, setInfoBarText] = useState("")
+	const [OTP, setOTP] = useState(null) //for progressBar
 
-    return (
-        <View style={style.body}>
-            <ProgressSteps stage={2} />
-
-            <View style={style.imageContainer}>
-                <Image style={style.image} source={require("../../assets/registration.png")} />
-            </View>
-
-            <View style={style.headerContainer}>
-                <Text style={style.heading}>Register Phone Number</Text>
-                <Text style={style.subText}>Enter your phone number to register new account
-                    and get OTP through SMS</Text>
-            </View>
-
-            <View style={style.phoneNumberInputContainer}>
-
-                <TextInput style={style.phoneNumberInput} value={phone} onChange={handleOnchange}
-                    placeholder="01***********" maxLength={11}
-                />
-
-            </View>
+	function handleSubmit(e) {
+		RequestInitiateOtp()
+	}
 
 
-            <Text style={{ ...style.subText, ...style.textStart }} >
-                By registering you are agreeing to our
-                    <TouchableOpacity style={style.pageLink}>Terms of Service</TouchableOpacity> and
-                    <TouchableOpacity style={style.pageLink}> Privacy Policy</TouchableOpacity>
-            </Text>
+	async function RequestInitiateOtp() {
+		try {
+			setLoading(true)
 
-            <View style={style.submitButtonContainer}>
-                <TouchableOpacity style={style.submitButton} onPress={handleSubmit}>
-                    Register
-                </TouchableOpacity>
-            </View>
+			const response = await fetch(baseUrl + '/api/register/initiate', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ phone })
+			})
 
-            <View style={style.infoTextContainer}>
-                <Text style={style.infoText}>
-                    Already have an account?
-                    <TouchableOpacity style={style.link}>
-                        Log In
-                    </TouchableOpacity>
+			if (response.ok) {
+				const OTP = await response.json()
+				setInputError({})
+				setOTP(OTP)
+				props.navigation.navigate("VerifyOTP", { OTP: OTP[0] })
+			} else {
+				if (response.status >= 400 && response.status < 500) {
+					setInputError(await response.json())
+				} else if (response.status >= 500 && response.status < 600) {
+					setInfoBarText("Could not process request!")
+					setInfoBarVisible(true)
+				}
+			}
+			setLoading(false)
+
+		} catch (err) {
+			console.log(err)
+			setLoading(false)
+		}
+	}
+
+	return (
+		<>
+
+			<Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
+				style={{ marginBottom: 35 }}
+			// action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+			>
+				{infoBarText}
+			</Snackbar>
+
+			{loading && <OverlayActivityIndicator />}
+
+			<ScrollView style={style.body}>
+				<ProgressSteps stage={1} {...props} OTP={OTP} />
+
+				<View style={style.headerContainer}>
+					<Text style={style.heading}>Register Phone Number</Text>
+
+				</View>
+
+				<View style={style.imageContainer}>
+					<Image style={style.image} source={require("../../assets/register2.jpg")} />
+				</View>
+
+				<Text style={style.subText}>
+					Enter your phone number to register new account and get OTP through SMS
+				</Text>
+
+				<View style={style.phoneNumberInputContainer}>
+
+					<TextInput style={style.phoneNumberInput} value={phone}
+						onChangeText={text => setPhone(text)}
+						placeholder="01*********" maxLength={11}
+						keyboardType="numeric"
+					/>
+					<HelperText type="error" visible={inputError.phone ? true : false} padding="none">
+						{inputError.phone}
+					</HelperText>
+				</View>
+
+
+
+				<View style={style.submitButtonContainer}>
+					<TouchableOpacity onPress={handleSubmit}>
+						<Text style={style.submitButton}>REGISTER</Text>
+					</TouchableOpacity>
+				</View>
+
+				<View style={style.infoTextContainer}>
+					<Text style={style.infoText}>
+						Already have an account?
                 </Text>
-            </View>
+					<TouchableOpacity onPress={() => props.navigation.navigate("Login")}>
+						<Text style={style.link}> Log In</Text>
+					</TouchableOpacity>
+				</View>
 
-        </View>
-    )
+				<View style={style.agreeTextView}>
+
+					<Text style={[style.subText, style.textStart]} >
+						By registering you are agreeing to our
+                </Text>
+					<TouchableOpacity >
+						<Text style={[style.pageLink, style.subText]}> Terms of Service</Text>
+					</TouchableOpacity>
+
+					<Text style={[style.subText]}> and </Text>
+
+					<TouchableOpacity >
+						<Text style={[style.pageLink, style.subText]}>Privacy Policy</Text>
+					</TouchableOpacity>
+
+				</View>
+
+
+			</ScrollView>
+		</>
+	)
 }
 
 export default InitiateOTP
 
-const style = {
-    body: {
-        width: "100%",
-        paddingLeft: "10%",
-        paddingRight: "10%"
-    },
-    imageContainer: {
-        width: "100%",
-        height: 200,
-        marginTop: 50
-    },
-    image: {
-        width: "100%",
-        height: "100%"
-    },
+const style = StyleSheet.create({
+	body: {
+		width: "100%",
+		paddingLeft: "5%",
+		paddingRight: "5%",
+	},
+	imageContainer: {
+		width: "80%",
+		height: 200,
+		marginTop: 20,
+		marginLeft: "10%"
+	},
+	image: {
+		width: "100%",
+		height: "100%"
+	},
 
-    heading: {
-        fontSize: 25,
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "#5d5d5d",
-        // fontFamily: "Nunito-Regular"
-    },
-    subText: {
-        textAlign: "center",
-        color: "#d0d0d0",
-        marginTop: 5,
+	heading: {
+		fontSize: 22,
+		fontWeight: "bold",
+		textAlign: "center",
+		color: "#369d9e",
+		fontFamily: "serif",
+	},
+	subText: {
+		textAlign: "center",
+		color: "#a1a1a1",
+		marginTop: 5,
+		fontSize: 12
+	},
+	headerContainer: {
+		marginTop: 10,
+	},
+	phoneNumberInput: {
+		fontSize: 25,
+		borderRadius: 4,
+		padding: 5,
+		borderColor: "#369d9e",
+		borderWidth: 1.5,
+		letterSpacing: 14,
+		color: "#5d5d5d"
+	},
+	phoneNumberInputContainer: {
+		marginTop: 20,
+		marginBottom: 10,
+	},
+	phoneError: {
+		marginLeft: 0
+	},
+	agreeTextView: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "center",
+		marginBottom: 50,
+		marginTop: 15
 
-    },
-    headerContainer: {
-        marginTop: 20,
-    },
-    phoneNumberInput: {
-        fontSize: "6.5vw",
-        borderRadius: 5,
-        padding: 10,
-        borderColor: "#ebebeb",
-        borderWidth: 1,
-        letterSpacing: "3.1vw"
-    },
-    phoneNumberInputContainer: {
-        marginTop: 40,
-    },
-    textStart: {
-        textAlign: "justify"
-    },
-    pageLink: {
-        textDecoration: "underline"
-    },
-    submitButton: {
-        fontWeight: "bold",
-        fontSize: 25,
-        backgroundColor: "#359d9e",
-        borderRadius: 8,
-        color: "#fff",
-        textAlign: "center",
-        padding: 10
-    },
-    submitButtonContainer: {
-        marginTop: 20
-    },
-    textCenter:{
-        textAlign: "center"
-    },
+	},
+	textStart: {
+		textAlign: "justify"
+	},
+	pageLink: {
+		color: "#d0d0d0",
+		textDecorationLine: "underline"
+	},
+	submitButton: {
+		fontWeight: "normal",
+		fontSize: 20,
+		backgroundColor: "#359d9e",
+		borderRadius: 5,
+		color: "#fff",
+		textAlign: "center",
+		padding: 5
+	},
+	submitButtonContainer: {
+		marginTop: 0
+	},
+	textCenter: {
+		textAlign: "center"
+	},
 
-    infoText:{
-        color: "#359d9e",
-        textAlign: "center"
-    },
-    link:{
-        color: "#359d9e",
-        fontWeight: "bold"
-    },
-    infoTextContainer:{
-        marginTop:20,
-    }
-}
+	infoText: {
+		color: "#359d9e",
+		textAlign: "center"
+	},
+	link: {
+		color: "#359d9e",
+		fontWeight: "bold"
+	},
+	infoTextContainer: {
+		marginTop: 10,
+		flexDirection: "row",
+		justifyContent: "center",
+	}
+})
