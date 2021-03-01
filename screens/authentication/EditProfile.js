@@ -5,12 +5,11 @@ import ProgressSteps from "../../components/authentication/ProgressSteps"
 import OverlayActivityIndicator from "../../components/OverlayActivityIndicator"
 import { baseUrl } from "../../config.json"
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import Icon from "react-native-vector-icons/Ionicons"
 
-export const Login = (props) => {
+export const SetInformation = (props) => {
 
+    const [userName, setUserName] = useState("")
     const [phone, setPhone] = useState("")
-    const [password, setPassword] = useState("")
 
     const [loading, setLoading] = useState(false)
     const [inputError, setInputError] = useState({})
@@ -19,48 +18,87 @@ export const Login = (props) => {
 
 
     function handleSubmit(e) {
-        RequestVerifyOTP()
+        requestUpdateProfile()
     }
 
     useEffect(() => {
-        if (!props.route || !props.route.params || !props.route.params.authToken) {
-            // props.navigation.goBack()
-        }
-    }, [props])
+        getUserInfo();
+    }, [])
 
 
-    async function RequestVerifyOTP() {
-        try {
+    async function getUserInfo(){
+        try{
             setLoading(true)
 
-            const response = await fetch(baseUrl + '/api/login', {
+            const response = await fetch(baseUrl + '/customer/api/profile/', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    ['x-access-token']: await AsyncStorage.getItem("authToken")
+                }
+            }) 
+            
+            if (response.ok) {
+                const res = await response.json()
+                setUserName(res.name);
+                setPhone(res.phone)
+            } else {
+
+                if(response.status == 403){
+                    setInfoBarVisible(true);
+                    setInfoBarText("Authorization Error")
+                }
+                else if (response.status >= 400 && response.status < 500) {
+                    setInputError(await response.json())
+                } else if (response.status >= 500 && response.status < 600) {
+                    setInfoBarText("Could not process request!")
+                    setInfoBarVisible(true)
+                }
+                
+            }
+            setLoading(false)
+
+        } catch (err) {
+            console.log(err)
+            setLoading(false)
+        }
+    }
+
+    async function requestUpdateProfile() {
+        try {
+
+            if (!userName) {
+                return setInputError({ userName: "Enter Your Name" })
+            }
+          
+
+            setLoading(true)
+
+            const response = await fetch(baseUrl + '/customer/api/profile/update', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ['x-access-token']: await AsyncStorage.getItem("authToken")
                 },
-                body: JSON.stringify({ phone, password })
+                body: JSON.stringify({
+                    name: userName,
+                })
 
-            })
-
+            }) 
+            
             if (response.ok) {
                 const OTP = await response.json()
                 setInputError({})
-
-                //signed in
-                try {
-                    AsyncStorage.setItem("authToken", OTP.authToken)
-                    props.navigation.push("Profile")
-                } catch (err) {
-                    setInfoBarVisible(true)
-                    setInfoBarText("Could not Store authentication data ")
-                }
-
+                props.navigation.push("Profile");
             } else {
-                if (response.status >= 400 && response.status < 500) {
-                    let error = await response.json();
-                    console.log(error)
-                    setInputError(error)
+                if(response.status == 403){
+                    setInfoBarVisible(true);
+                    setInfoBarText("Authorization Error")
+                }
+                else if (response.status >= 400 && response.status < 500) {
+                    setInputError(await response.json())
                 } else if (response.status >= 500 && response.status < 600) {
                     setInfoBarText("Could not process request!")
                     setInfoBarVisible(true)
@@ -75,13 +113,12 @@ export const Login = (props) => {
     }
 
 
-
     return (
         <>
 
             <Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
                 style={{ marginBottom: 35 }}
-                action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
+            action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
             >
                 {infoBarText}
             </Snackbar>
@@ -90,24 +127,39 @@ export const Login = (props) => {
             <ScrollView style={style.body}>
 
                 <View style={style.headerContainer}>
-                    <Text style={style.heading}>Welcome Back</Text>
+                    <Text style={style.heading}>Edit Information</Text>
                 </View>
 
                 <View style={style.imageContainer}>
-                    <Image style={style.image} source={require("../../assets/login1.jpg")} />
+                    <Image style={style.image} source={require("../../assets/editProfile.jpg")} />
                 </View>
 
-                <Text style={style.subText}>
-                    Log In To Your Account
-                </Text>
+{/* 
+                <View style={style.headerContainer}>
+                    <Text style={style.heading2}>Edit Information</Text>
+                </View> */}
 
                 <View style={style.inputContainer}>
 
-                    <TextInput style={style.input} value={phone}
+                    <TextInput style={style.input} value={userName}
+                        onChangeText={text => setUserName(text)}
+                        placeholder="Your Full Name"
+                        maxLength={40}
+                    />
+                    {inputError.userName &&
+                        <HelperText type="error" visible={inputError.userName ? true : false} padding="none">
+                            {inputError.userName}
+                        </HelperText>
+                    }
+                </View>
+
+                <View style={style.inputContainer}>
+
+                    <TextInput style={[style.input, {backgroundColor: "#dddd"}]} value={phone}
                         onChangeText={text => setPhone(text)}
-                        placeholder="Phone number"
-                        maxLength={11}
-                        keyboardType="numeric"
+                        placeholder="01 *** *** ***"
+                        maxLength={40}
+                        editable={false}
                     />
                     {inputError.phone &&
                         <HelperText type="error" visible={inputError.phone ? true : false} padding="none">
@@ -116,34 +168,10 @@ export const Login = (props) => {
                     }
                 </View>
 
-                <View style={style.inputContainer}>
-
-                    <TextInput style={style.input} value={password}
-                        secureTextEntry={true}
-                        onChangeText={text => setPassword(text)}
-                        placeholder="Password"
-                        maxLength={40}
-                    />
-                    {inputError.password &&
-                        <HelperText type="error" visible={inputError.password ? true : false} padding="none">
-                            {inputError.password}
-                        </HelperText>
-                    }
-                </View>
 
                 <View style={style.submitButtonContainer}>
                     <TouchableOpacity onPress={handleSubmit}>
-                        <Text style={style.submitButton}>Login </Text>
-                    </TouchableOpacity>
-                </View>
-
-
-                <View style={style.infoTextContainer}>
-                    <Text style={style.infoText}>
-                        Don't have an account?
-                </Text>
-                    <TouchableOpacity onPress={() => props.navigation.navigate("InitiateOTP")}>
-                        <Text style={style.link}> Register</Text>
+                        <Text style={style.submitButton}>Update</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -152,7 +180,7 @@ export const Login = (props) => {
     )
 }
 
-export default Login
+export default SetInformation
 
 const style = StyleSheet.create({
     body: {
@@ -164,7 +192,8 @@ const style = StyleSheet.create({
         width: "80%",
         height: 200,
         marginTop: 20,
-        marginLeft: "10%"
+        marginLeft: "10%",
+        marginBottom: 60
     },
     image: {
         width: "100%",
@@ -191,10 +220,7 @@ const style = StyleSheet.create({
         textAlign: "center",
         color: "#a1a1a1",
         marginTop: 5,
-        fontSize: 16,
-        marginTop: 20,
-        marginBottom: 20,
-        fontFamily: "serif"
+        fontSize: 12
     },
     headerContainer: {
         marginTop: 10,
@@ -211,8 +237,8 @@ const style = StyleSheet.create({
         fontFamily: "serif"
     },
     inputContainer: {
-        marginTop: 10,
-        marginBottom: 0,
+        marginTop: 5,
+        marginBottom: 5,
     },
     phoneError: {
         marginLeft: 0
@@ -243,7 +269,7 @@ const style = StyleSheet.create({
     },
     submitButtonContainer: {
         marginTop: 20,
-        // marginBottom: 50
+        marginBottom: 50
     },
     textCenter: {
         textAlign: "center"

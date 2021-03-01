@@ -7,7 +7,7 @@ export const OverlayActivityIndicator = (props) => {
 
   return (
     <View style={style.container}>
-      <ActivityIndicator color="#369d9e" style={{ position: "relative" }} size="large"/>
+      <ActivityIndicator color="#359d9e" style={{ position: "relative" }} size="large"/>
     </View>
   )
 }
@@ -23,6 +23,6 @@ const style = StyleSheet.create({
     top: 0,
     left: 0,
     zIndex: 100,
-    backgroundColor: "#fff5"
+    backgroundColor: "#fff4"
   }
 })

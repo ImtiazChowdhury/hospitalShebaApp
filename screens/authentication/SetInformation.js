@@ -63,7 +63,7 @@ export const SetInformation = (props) => {
             if (response.ok) {
                 const OTP = await response.json()
                 setInputError({})
-                props.navigation.navigate("Profile");
+                props.navigation.push("Profile");
             } else {
                 if(response.status == 403){
                     setInfoBarVisible(true);
@@ -90,7 +90,7 @@ export const SetInformation = (props) => {
 
             <Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
                 style={{ marginBottom: 35 }}
-            // action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+            action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
             >
                 {infoBarText}
             </Snackbar>
@@ -187,7 +187,7 @@ const style = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         textAlign: "center",
-        color: "#369d9e",
+        color: "#359d9e",
         fontFamily: "serif",
     },
 
@@ -214,7 +214,7 @@ const style = StyleSheet.create({
         padding: 8,
         paddingLeft: 10,
         paddingRight: 10,
-        borderColor: "#369d9e",
+        borderColor: "#359d9e",
         borderWidth: 1.5,
         color: "#5d5d5d",
         fontFamily: "serif"

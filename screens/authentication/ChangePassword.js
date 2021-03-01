@@ -5,12 +5,11 @@ import ProgressSteps from "../../components/authentication/ProgressSteps"
 import OverlayActivityIndicator from "../../components/OverlayActivityIndicator"
 import { baseUrl } from "../../config.json"
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import Icon from "react-native-vector-icons/Ionicons"
 
-export const Login = (props) => {
+export const SetInformation = (props) => {
 
-    const [phone, setPhone] = useState("")
     const [password, setPassword] = useState("")
+    const [repeatPassword, setRepeatPassword] = useState("")
 
     const [loading, setLoading] = useState(false)
     const [inputError, setInputError] = useState({})
@@ -19,48 +18,50 @@ export const Login = (props) => {
 
 
     function handleSubmit(e) {
-        RequestVerifyOTP()
+        requestUpdateProfile()
     }
 
-    useEffect(() => {
-        if (!props.route || !props.route.params || !props.route.params.authToken) {
-            // props.navigation.goBack()
-        }
-    }, [props])
 
-
-    async function RequestVerifyOTP() {
+    async function requestUpdateProfile() {
         try {
+
+            if (!password) {
+                return setInputError({ password: "Enter password" })
+            }
+            if (!repeatPassword) {
+                return setInputError({ repeatPassword: "Enter password again" })
+            }
+            if (password !== repeatPassword) {
+                return setInputError({ repeatPassword: "Passwords do not match" })
+            }
+          
+
             setLoading(true)
 
-            const response = await fetch(baseUrl + '/api/login', {
+            const response = await fetch(baseUrl + '/customer/api/profile/update', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ['x-access-token']: await AsyncStorage.getItem("authToken")
                 },
-                body: JSON.stringify({ phone, password })
+                body: JSON.stringify({
+                    password,
+                })
 
-            })
-
+            }) 
+            
             if (response.ok) {
                 const OTP = await response.json()
                 setInputError({})
-
-                //signed in
-                try {
-                    AsyncStorage.setItem("authToken", OTP.authToken)
-                    props.navigation.push("Profile")
-                } catch (err) {
-                    setInfoBarVisible(true)
-                    setInfoBarText("Could not Store authentication data ")
-                }
-
+                props.navigation.push("Profile");
             } else {
-                if (response.status >= 400 && response.status < 500) {
-                    let error = await response.json();
-                    console.log(error)
-                    setInputError(error)
+                if(response.status == 403){
+                    setInfoBarVisible(true);
+                    setInfoBarText("Authorization Error")
+                }
+                else if (response.status >= 400 && response.status < 500) {
+                    setInputError(await response.json())
                 } else if (response.status >= 500 && response.status < 600) {
                     setInfoBarText("Could not process request!")
                     setInfoBarVisible(true)
@@ -75,13 +76,12 @@ export const Login = (props) => {
     }
 
 
-
     return (
         <>
 
             <Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
                 style={{ marginBottom: 35 }}
-                action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
+            action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
             >
                 {infoBarText}
             </Snackbar>
@@ -90,39 +90,25 @@ export const Login = (props) => {
             <ScrollView style={style.body}>
 
                 <View style={style.headerContainer}>
-                    <Text style={style.heading}>Welcome Back</Text>
+                    <Text style={style.heading}>Change Password</Text>
                 </View>
 
                 <View style={style.imageContainer}>
-                    <Image style={style.image} source={require("../../assets/login1.jpg")} />
+                    <Image style={style.image} source={require("../../assets/password.jpg")} />
                 </View>
 
-                <Text style={style.subText}>
-                    Log In To Your Account
-                </Text>
-
-                <View style={style.inputContainer}>
-
-                    <TextInput style={style.input} value={phone}
-                        onChangeText={text => setPhone(text)}
-                        placeholder="Phone number"
-                        maxLength={11}
-                        keyboardType="numeric"
-                    />
-                    {inputError.phone &&
-                        <HelperText type="error" visible={inputError.phone ? true : false} padding="none">
-                            {inputError.phone}
-                        </HelperText>
-                    }
-                </View>
+{/* 
+                <View style={style.headerContainer}>
+                    <Text style={style.heading2}>Change Password</Text>
+                </View> */}
 
                 <View style={style.inputContainer}>
 
                     <TextInput style={style.input} value={password}
-                        secureTextEntry={true}
                         onChangeText={text => setPassword(text)}
-                        placeholder="Password"
+                        placeholder="New Password"
                         maxLength={40}
+                        secureTextEntry = {true}
                     />
                     {inputError.password &&
                         <HelperText type="error" visible={inputError.password ? true : false} padding="none">
@@ -131,19 +117,25 @@ export const Login = (props) => {
                     }
                 </View>
 
-                <View style={style.submitButtonContainer}>
-                    <TouchableOpacity onPress={handleSubmit}>
-                        <Text style={style.submitButton}>Login </Text>
-                    </TouchableOpacity>
+                <View style={style.inputContainer}>
+
+                    <TextInput style={style.input} value={repeatPassword}
+                        onChangeText={text => setRepeatPassword(text)}
+                        placeholder="Repeat New  Password"
+                        maxLength={40}
+                        secureTextEntry = {true}
+                    />
+                    {inputError.repeatPassword &&
+                        <HelperText type="error" visible={inputError.repeatPassword ? true : false} padding="none">
+                            {inputError.repeatPassword}
+                        </HelperText>
+                    }
                 </View>
 
 
-                <View style={style.infoTextContainer}>
-                    <Text style={style.infoText}>
-                        Don't have an account?
-                </Text>
-                    <TouchableOpacity onPress={() => props.navigation.navigate("InitiateOTP")}>
-                        <Text style={style.link}> Register</Text>
+                <View style={style.submitButtonContainer}>
+                    <TouchableOpacity onPress={handleSubmit}>
+                        <Text style={style.submitButton}>Update</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -152,7 +144,7 @@ export const Login = (props) => {
     )
 }
 
-export default Login
+export default SetInformation
 
 const style = StyleSheet.create({
     body: {
@@ -164,7 +156,8 @@ const style = StyleSheet.create({
         width: "80%",
         height: 200,
         marginTop: 20,
-        marginLeft: "10%"
+        marginLeft: "10%",
+        marginBottom: 60
     },
     image: {
         width: "100%",
@@ -191,10 +184,7 @@ const style = StyleSheet.create({
         textAlign: "center",
         color: "#a1a1a1",
         marginTop: 5,
-        fontSize: 16,
-        marginTop: 20,
-        marginBottom: 20,
-        fontFamily: "serif"
+        fontSize: 12
     },
     headerContainer: {
         marginTop: 10,
@@ -211,8 +201,8 @@ const style = StyleSheet.create({
         fontFamily: "serif"
     },
     inputContainer: {
-        marginTop: 10,
-        marginBottom: 0,
+        marginTop: 5,
+        marginBottom: 5,
     },
     phoneError: {
         marginLeft: 0
@@ -243,7 +233,7 @@ const style = StyleSheet.create({
     },
     submitButtonContainer: {
         marginTop: 20,
-        // marginBottom: 50
+        marginBottom: 50
     },
     textCenter: {
         textAlign: "center"

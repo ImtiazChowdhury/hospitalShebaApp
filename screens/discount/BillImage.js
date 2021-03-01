@@ -32,6 +32,9 @@ export const BillImage = (props) => {
 	const [discountData, setDiscountData] = useState(null)
 
 	useEffect(() => {
+		setImagePath(null);
+	}, [])
+	useEffect(() => {
 		(async () => {
 			if (Platform.OS !== 'web') {
 				const granted = ImagePicker.getCameraPermissionsAsync()
@@ -62,20 +65,21 @@ export const BillImage = (props) => {
 	}
 
 	async function sendRequest() {
-		setLoading(true);
 
 		let photo = {
 			uri: imagePath,
 			type: 'image/jpeg',
 			name: 'photo.jpg',
 		}
-
 		let form = new FormData()
-		form.append("bill", photo)
+
 		form.append("hospital", props.route.params.hospital._id)
+		form.append("bill", photo)
+		console.log(photo, form)
 
 		try {
-			
+			setLoading(true);
+
 			const response = await fetch(baseUrl + '/customer/api/bill/new', {
 				body: form,
 				method: "POST",
@@ -88,7 +92,6 @@ export const BillImage = (props) => {
 			if (response.ok) {
 				const data = await response.json()
 				setDiscountData(data[0]);
-				console.log(data)
 			} else {
 				if (response.status >= 400 && response.status < 500) {
 					const errorList = await response.json()
@@ -107,6 +110,12 @@ export const BillImage = (props) => {
 			setInfoBarText("Client Error : Could not process")
 			setInfoBarVisible(true)
 		}
+	}
+
+	function reset(){
+		setImagePath(null);
+		setDiscountData(null)
+		props.navigation.push("Main");
 	}
 
 	return (
@@ -146,7 +155,7 @@ export const BillImage = (props) => {
 
 							<View style={styles.actionButtonView}>
 								<TouchableOpacity style={styles.buttonTouch} onPress={sendRequest}>
-									<Text style={[styles.buttonText, {marginRight: 5 }]} >Get Discount</Text>
+									<Text style={[styles.buttonText, { marginRight: 5 }]} >Get Discount</Text>
 									<Icon name="chevron-forward-circle-outline" size={20} color="#fff" />
 								</TouchableOpacity>
 							</View>
@@ -160,7 +169,7 @@ export const BillImage = (props) => {
 				<View style={styles.discountInfoContainer}>
 
 					<View style={styles.discountInfo} >
-						<Icon name="checkmark-sharp" size={60} color="#369d9e" />
+						<Icon name="checkmark-sharp" size={60} color="#359d9e" />
 						<Text style={styles.successHeading} >SUCCESS</Text>
 						<Text style={styles.successText} >
 							Bill Uploaded Successfully, please check out from the counter.
@@ -177,8 +186,13 @@ export const BillImage = (props) => {
 
 						<View style={styles.modalButtonView}>
 							<TouchableOpacity style={styles.modalButtonTouch}
-								onPress={() => {props.navigation.navigate("Home")}}
-								// onPress={()=>setDiscountData(null)}
+								onPress={reset}
+							>
+								<Text style={styles.link}>Scan Again</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButtonTouch}
+								onPress={() => { props.navigation.navigate("Home") }}
+							// onPress={()=>setDiscountData(null)}
 
 							>
 								<Text style={styles.link}>Ok</Text>
@@ -251,7 +265,7 @@ const styles = StyleSheet.create({
 		fontSize: 22,
 		fontFamily: "serif",
 		marginLeft: 5,
-		color: "#369d9e"
+		color: "#359d9e"
 	},
 	subHeadingContainer: {
 		flexDirection: "row",
@@ -298,7 +312,7 @@ const styles = StyleSheet.create({
 		marginTop: 30,
 		borderRadius: 5,
 		borderWidth: 1,
-		borderColor: "#369d9e",
+		borderColor: "#359d9e",
 		alignSelf: "center"
 	},
 	actions: {
@@ -336,13 +350,13 @@ const styles = StyleSheet.create({
 		borderRadius: 10
 	},
 	successHeading: {
-		color: "#369d9e",
+		color: "#359d9e",
 		fontSize: 20,
 		fontWeight: "bold",
 		marginBottom: 25
 	},
 	successText: {
-		color: "#369d9e",
+		color: "#359d9e",
 		fontSize: 16,
 		marginTop: 10,
 		textAlign: "center",
@@ -351,19 +365,22 @@ const styles = StyleSheet.create({
 	},
 	modalButtonView: {
 		marginTop: 25,
-		justifyContent: "flex-end",
+		justifyContent: "space-between",
 		flexDirection: "row",
 		width: "100%",
 		padding: 5,
 	},
+	modalButtonTouch:{
+		marginLeft: 20
+	},
 	link: {
-		color: "#369d9e",
+		color: "#359d9e",
 		fontWeight: "bold",
 		alignSelf: "flex-end"
 	},
-	discountText:{
+	discountText: {
 		color: "#5d5d5d",
-		textAlign:"center",
+		textAlign: "center",
 		lineHeight: 18,
 		fontSize: 14
 	}

@@ -7,7 +7,7 @@ export const RelativeActivityIndicator = (props) => {
 
   return (
     <View style={style.container}>
-      <ActivityIndicator color="#369d9e" style={{ position: "relative" }} />
+      <ActivityIndicator color="#359d9e" style={{ position: "relative" }} />
     </View>
   )
 }

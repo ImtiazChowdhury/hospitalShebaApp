@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react"
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, FlatList, Image, TouchableOpacity, TouchableHighlight, TouchableHighlightBase, TouchableHighlightComponent } from "react-native"
+import { SafeAreaView, StyleSheet, View, Text, FlatList, Image, TouchableOpacity, RefreshControl } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
 import { Card, ActivityIndicator } from "react-native-paper"
 import { baseUrl } from "../../config.json"
 import HospitalListSearch from "../../components/services/HospitalListSearch"
-import { TouchableNativeFeedback } from "react-native-gesture-handler"
-import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
+import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
 
 export const TestList = ({ navigation, route }) => {
 
+	const [refreshing, setRefreshing] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const [hospitals, setHospitals] = useState([])
 	const [formData, setFormData] = useState({
@@ -84,11 +84,17 @@ export const TestList = ({ navigation, route }) => {
 
 	useEffect(() => { loadHospitalList() }, [query, selectedZone, selectedDistrict])
 
+	async function onRefresh(){
+		setRefreshing(true);
+		await loadHospitalList();
+		setRefreshing(false)
+	}
+	
 	function renderItem({ item }) {
 		return (
 
 			<Card style={style.listCard} >
-				<TouchableOpacity onPress={() => { }}>
+				<TouchableOpacity onPress={() => {navigation.navigate("TestDetail", {test: item._id}) }}>
 					<View style={style.listView}>
 						<Image source={{ uri: item.cover && (baseUrl + item.cover.medium) }} style={style.image} />
 						<View style={style.textContainer}>
@@ -124,17 +130,20 @@ export const TestList = ({ navigation, route }) => {
 
 			<HospitalListSearch handleInput={handleInput} formData={formData} handleSubmit={handleSubmit} />
 			{loading &&
-				<RelativeActivityIndicator />
+				<OverlayActivityIndicator />
 			}
 			<FlatList
 				data={hospitals}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
+				style={{ marginBottom: 80 }}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#359d9e"]}/>}
+
 			/>
 			{!loading && !hospitals.length &&
 				<View style={style.notFoundMessage} >
 					<Icon name="alert-circle-outline" size={75} color="#5d5d5d" />
-					<Text style={style.notFoundText}>No hospital found nearby</Text>
+					<Text style={style.notFoundText}>No diagnosis service found nearby</Text>
 
 				</View>
 			}
@@ -221,7 +230,7 @@ const style = StyleSheet.create({
 		padding: 2,
 	},
 	infoViewText: {
-		color: "#369d9eee",
+		color: "#359d9eee",
 		fontSize: 15
 	},
 })

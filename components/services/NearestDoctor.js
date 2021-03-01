@@ -4,7 +4,9 @@ import { baseUrl } from "../../config.json"
 import { Card, Snackbar, Title, ActivityIndicator } from "react-native-paper"
 import Icon from "react-native-vector-icons/Ionicons"
 
-export const NearestDoctor = ({navigation, route}) => {
+import DoctorImage from "../../assets/doctor2.png"
+
+export const NearestDoctor = ({ navigation, route }) => {
 
     const [tests, setTests] = useState([])
     const [alert, setAlert] = useState(false)
@@ -40,17 +42,19 @@ export const NearestDoctor = ({navigation, route}) => {
 
     return (
         <>
-            <Snackbar visible={alert} duration={5000} theme={{ colors: { primary: "#c12127" } }}>
+            <Snackbar visible={alert} duration={5000} theme={{ colors: { primary: "#c12127" } }}
+                action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
+            >
                 Could not load data
             </Snackbar>
- 
+
             <View style={style.titleContainer}>
                 <Title style={style.heading}>Doctors</Title>
-                <TouchableOpacity onPress={()=>{navigation.navigate("DoctorList")}}>
+                <TouchableOpacity onPress={() => { navigation.navigate("DoctorList") }}>
 
                     <View style={style.seeMoreView}>
                         <Text style={style.seeMoreText}>See More</Text>
-                        <Icon style={style.seeMoreIcon} name="chevron-forward" color="#369d9e" size={16} />
+                        <Icon style={style.seeMoreIcon} name="chevron-forward" color="#359d9e" size={16} />
                     </View>
                 </TouchableOpacity>
             </View>
@@ -58,8 +62,8 @@ export const NearestDoctor = ({navigation, route}) => {
                 {tests.length > 0 && tests.map(i => (
 
                     <Card style={style.hospitalCard} key={i._id}>
-                        <TouchableOpacity>
-                            <Card.Cover style={style.cardImage} source={{ uri: baseUrl + i.cover.medium }} />
+                        <TouchableOpacity onPress={() => navigation.navigate("DoctorDetail", { doctor: i._id })}>
+                            <Card.Cover style={style.cardImage} source={i.cover && { uri:baseUrl + i.cover.medium } || DoctorImage}/>
                             <View>
                                 <Text style={style.doctorName}>{i.name}</Text>
                                 <Text style={style.categoryName}>{i.diseaseCategory && i.diseaseCategory.name}</Text>
@@ -79,7 +83,7 @@ export const NearestDoctor = ({navigation, route}) => {
                 }
                 {loading &&
                     <View style={style.notFoundMessage}>
-                        <ActivityIndicator color="#369d9e" />
+                        <ActivityIndicator color="#359d9e" />
                     </View>
                 }
             </View>
@@ -93,7 +97,11 @@ const style = StyleSheet.create({
     hospitalCard: {
         width: "48%",
         marginBottom: 15,
-        marginTop:5,
+        marginTop: 5,
+        backgroundColor: "#fff"
+    },
+    cardImage:{
+        backgroundColor: "#fff"
     },
     cardContainer: {
         flexDirection: "row",
@@ -111,7 +119,7 @@ const style = StyleSheet.create({
         color: "#5d5d5d",
         marginBottom: 20
     },
-   
+
     doctorName: {
         fontWeight: "400",
         fontSize: 14,
@@ -146,14 +154,14 @@ const style = StyleSheet.create({
     titleContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin:5,
+        margin: 5,
         marginTop: 30,
-        padding:5,
+        padding: 5,
         borderColor: "#d5d5d599",
-        borderWidth:1,
-        borderRadius:5,
-        alignItems:"center",
-		backgroundColor:"#369d9e22"
+        borderWidth: 1,
+        borderRadius: 5,
+        alignItems: "center",
+        backgroundColor: "#359d9e22"
 
     },
     heading: {
@@ -163,10 +171,10 @@ const style = StyleSheet.create({
     },
     seeMoreView: {
         flexDirection: "row",
-        alignItems:"center",  
+        alignItems: "center",
     },
     seeMoreText: {
-        color: "#369d9e",
+        color: "#359d9e",
     },
     seeMoreIcon: {
         marginTop: 3

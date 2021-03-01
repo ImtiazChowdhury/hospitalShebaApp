@@ -58,7 +58,7 @@ export const InitiateOTP = (props) => {
 
 			<Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
 				style={{ marginBottom: 35 }}
-			// action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+			action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
 			>
 				{infoBarText}
 			</Snackbar>
@@ -156,7 +156,7 @@ const style = StyleSheet.create({
 		fontSize: 22,
 		fontWeight: "bold",
 		textAlign: "center",
-		color: "#369d9e",
+		color: "#359d9e",
 		fontFamily: "serif",
 	},
 	subText: {
@@ -172,7 +172,7 @@ const style = StyleSheet.create({
 		fontSize: 25,
 		borderRadius: 4,
 		padding: 5,
-		borderColor: "#369d9e",
+		borderColor: "#359d9e",
 		borderWidth: 1.5,
 		letterSpacing: 14,
 		color: "#5d5d5d"

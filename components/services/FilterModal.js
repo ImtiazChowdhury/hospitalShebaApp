@@ -151,7 +151,7 @@ const style = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
-    backgroundColor: "#0006",
+    backgroundColor: "#359d9ecc",
     width: "100%",
     height: Dimensions.get("window").height - 100,
     zIndex: 100,
@@ -165,7 +165,7 @@ const style = StyleSheet.create({
     opacity: 1,
     padding: 10,
     elevation: 3,
-    borderRadius: 5
+    borderRadius: 10
   },
   closeBtnContainer: {
     alignItems: "flex-end",

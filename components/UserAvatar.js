@@ -24,7 +24,7 @@ export const UserAvatar = (props) => {
   }
   return (
     <TouchableOpacity onPress={navigate}>
-      <Icon name="person-sharp" size={24} style={style.personIcon} color="#369d9e" />
+      <Icon name="person-sharp" size={24} style={style.personIcon} color="#359d9e" />
     </TouchableOpacity>
   )
 }

@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet, Image, View, TouchableOpacity, Text, } from "re
 import { baseUrl } from "../../config.json"
 import { Card, Snackbar, Title, ActivityIndicator } from "react-native-paper"
 import Icon from "react-native-vector-icons/Ionicons"
+import HospitalImage from "../../assets/hospital.png"
 
 export const NearestHospital = ({ navigation, route }) => {
 
@@ -60,6 +61,7 @@ export const NearestHospital = ({ navigation, route }) => {
 				visible={alert}
 				duration={5000}
 				theme={{ colors: { primary: "#c12127" } }}
+				action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
 
 			>Could not load data</Snackbar>
 
@@ -69,7 +71,7 @@ export const NearestHospital = ({ navigation, route }) => {
 
 					<View style={style.seeMoreView}>
 						<Text style={style.seeMoreText}>See More</Text>
-						<Icon style={style.seeMoreIcon} name="chevron-forward" color="#369d9e" size={16} />
+						<Icon style={style.seeMoreIcon} name="chevron-forward" color="#359d9e" size={16} />
 					</View>
 				</TouchableOpacity>
 			</View>
@@ -78,9 +80,9 @@ export const NearestHospital = ({ navigation, route }) => {
 				{hospitals.length > 0 && hospitals.map(i => (
 
 					<Card style={style.hospitalCard} key={i._id}>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={()=>navigation.navigate("HospitalDetail", {hospital: i._id})}>
 
-							<Card.Cover style={style.cardImage} source={{ uri: i.cover && (baseUrl + i.cover.medium) }} />
+							<Card.Cover style={style.cardImage}  source={i.cover && { uri:baseUrl + i.cover.medium } || HospitalImage} />
 							<View>
 								<Text style={style.hospitalName}>{i.name}</Text>
 							</View>
@@ -98,7 +100,7 @@ export const NearestHospital = ({ navigation, route }) => {
 				}
 				{loading &&
 					<View style={style.notFoundMessage}>
-						<ActivityIndicator color="#369d9e" />
+						<ActivityIndicator color="#359d9e" />
 					</View>
 				}
 			</View>
@@ -153,7 +155,7 @@ const style = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 5,
 		alignItems: "center",
-		backgroundColor:"#369d9e18"
+		backgroundColor:"#359d9e18"
 
 	},
 	heading: {
@@ -166,7 +168,7 @@ const style = StyleSheet.create({
 		alignItems: "center",
 	},
 	seeMoreText: {
-		color: "#369d9e",
+		color: "#359d9e",
 	},
 	seeMoreIcon: {
 		marginTop: 3

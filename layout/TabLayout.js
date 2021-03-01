@@ -38,7 +38,7 @@ export const TabLayout = (props) => {
                         iconName = focused ? "qr-code" : "qr-code-outline"
                         return (
                             <View style={style.discountTab}>
-                                <Icon name={iconName} size={35} color="#369d9e" style={style.discountIcon} />
+                                <Icon name={iconName} size={35} color="#359d9e" style={style.discountIcon} />
                                 <Text style={style.discountLabel} >Discount</Text>
                             </View>
                         )

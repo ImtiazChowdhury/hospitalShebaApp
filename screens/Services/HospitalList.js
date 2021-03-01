@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react"
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, FlatList, Image, TouchableOpacity, TouchableHighlight, TouchableHighlightBase, TouchableHighlightComponent } from "react-native"
+import { SafeAreaView, StyleSheet, View, Text, FlatList, Image, TouchableOpacity, RefreshControl } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
-import { Card, ActivityIndicator } from "react-native-paper"
+import { Card, } from "react-native-paper"
 import { baseUrl } from "../../config.json"
 import HospitalListSearch from "../../components/services/HospitalListSearch"
-import { TouchableNativeFeedback } from "react-native-gesture-handler"
+import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
 import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
 
 export const HospitalList = ({ navigation, route }) => {
 
+	const [refreshing, setRefreshing] = useState(false);
 	const [loading, setLoading] = useState(true)
 	const [hospitals, setHospitals] = useState([])
+	const [page, setPage] = useState(1)
 	const [formData, setFormData] = useState({
 		query: "",
 		district: "",
@@ -23,10 +25,10 @@ export const HospitalList = ({ navigation, route }) => {
 	const [selectedDistrict, setSelectedDistrict] = useState("")
 	const [selectedZone, setSelectedZone] = useState("")
 
-	useEffect(()=>{
-		if(route.params && route.params.query) {
+	useEffect(() => {
+		if (route.params && route.params.query) {
 			setQuery(route.params.query);
-			setFormData(prevState=>({...prevState, query: route.params.query}))
+			setFormData(prevState => ({ ...prevState, query: route.params.query }))
 		}
 	}, [route.params])
 
@@ -46,48 +48,79 @@ export const HospitalList = ({ navigation, route }) => {
 			}
 		})
 	}
+	
+	async function requestList(page) {
+		return new Promise((resolve, reject) => {
 
-	async function loadHospitalList() {
-		try {
-			setLoading(true)
-			navigator.geolocation.getCurrentPosition(async loc => {
-				let url = baseUrl + "/api/hospital?";
-				url += `latitude=${loc.coords && loc.coords.latitude}`;
-				url += `&longitude=${loc.coords && loc.coords.longitude}`;
-				url += "&limit=20";
-				if(selectedDistrict){
-					url += "&district="+selectedDistrict
-				}
-				if(selectedZone){
-					url += "&zone="+selectedZone
-				}
-				if(query){
-					url += "&query="+query
-				}
-				const response = await fetch(url)
+			try {
+				navigator.geolocation.getCurrentPosition(async loc => {
+					let url = baseUrl + "/api/hospital?";
+					url += `latitude=${loc.coords && loc.coords.latitude}`;
+					url += `&longitude=${loc.coords && loc.coords.longitude}`;
+					url += "&limit=6&page=" + page;
+					if (selectedDistrict) {
+						url += "&district=" + selectedDistrict
+					}
+					if (selectedZone) {
+						url += "&zone=" + selectedZone
+					}
+					if (query) {
+						url += "&query=" + query
+					}
+					const response = await fetch(url)
 
-				if (response.ok) {
-					const list = await response.json()
-					setHospitals(list.data)
-				}
-				setLoading(false)
+					if (response.ok) {
+						const list = await response.json();
+						resolve(list.data);
+					}
 
-			})
+					resolve([])
+				})
 
-		} catch (err) {
-			console.log(err)
-			setLoading(false)
-		}
+			} catch (err) {
+				console.log(err)
+				resolve([])
+			}
+		})
 	}
 
+	async function loadHospitalList() {
+		setLoading(true);
+		let data = await requestList(1);
+		setHospitals(data);
+		setLoading(false);
+
+	}
+
+	async function onRefresh() {
+		setRefreshing(true);
+		setPage(1)
+		await loadHospitalList();
+		setRefreshing(false);
+	}
+
+	async function loadMore() {
+		
+		setLoading(true);
+		let data = await requestList(page+1);
+
+		if(data.length){
+			setHospitals(prevState => [...prevState, ...data]);
+			setPage(prevState => prevState + 1)
+		}
+
+		setLoading(false);
+	}
+	
 
 	useEffect(() => { loadHospitalList() }, [query, selectedZone, selectedDistrict])
+
 
 	function renderItem({ item }) {
 		return (
 
 			<Card style={style.listCard} >
-				<TouchableOpacity onPress={() => { }}>
+				<TouchableOpacity onPress={() => { navigation.navigate("HospitalDetail", { hospital: item._id }) }}>
 					<View style={style.listView}>
 						<Image source={{ uri: item.cover && (baseUrl + item.cover.medium) }} style={style.image} />
 						<View style={style.textContainer}>
@@ -125,13 +158,18 @@ export const HospitalList = ({ navigation, route }) => {
 
 			<HospitalListSearch handleInput={handleInput} formData={formData} handleSubmit={handleSubmit} />
 			{loading &&
-					<RelativeActivityIndicator />
+				<OverlayActivityIndicator />
 			}
 			<FlatList
 				data={hospitals}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
+				style={{ marginBottom: 80 }}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#359d9e"]} />}
+				onEndReached={loadMore}
+				onEndReachedThreshold={.1}
 			/>
+
 			{!loading && !hospitals.length &&
 				<View style={style.notFoundMessage} >
 					<Icon name="alert-circle-outline" size={75} color="#5d5d5d" />
@@ -139,7 +177,7 @@ export const HospitalList = ({ navigation, route }) => {
 
 				</View>
 			}
-			
+
 		</SafeAreaView>
 	)
 }
@@ -170,7 +208,7 @@ const style = StyleSheet.create({
 		borderColor: "#e1dfdf85",
 		padding: 5,
 		borderRadius: 5,
-		elevation:1,
+		elevation: 1,
 	},
 	listView: {
 		flexDirection: "row",

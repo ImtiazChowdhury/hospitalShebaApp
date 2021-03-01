@@ -63,7 +63,7 @@ export const Profile = (props) => {
 
 			<Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
 				style={{ marginBottom: 35 }}
-			// action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+				action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
 			>
 				{infoBarText}
 			</Snackbar>
@@ -80,6 +80,34 @@ export const Profile = (props) => {
 				</View>
 
 				{user && <>
+					<View style={style.actionContainer} >
+
+						<TouchableOpacity onPress={() => props.navigation.navigate("EditProfile")}>
+
+							<View style={style.listBtn}>
+								<Icon name="pencil" size={18} style={style.listIcon} color="#359d9e" />
+								<Text style={style.listBtnText} > Profile</Text>
+							</View>
+						</TouchableOpacity>
+
+						<TouchableOpacity onPress={() => props.navigation.navigate("ChangePassword")}>
+
+							<View style={style.listBtn}>
+								<Icon name="lock-open" size={18} style={style.listIcon} color="#359d9e" />
+								<Text style={style.listBtnText} > Password</Text>
+							</View>
+						</TouchableOpacity>
+
+						<TouchableOpacity onPress={() => props.navigation.navigate("BillList")}>
+
+							<View style={style.listBtn}>
+								<Icon name="list" size={18} style={style.listIcon} color="#359d9e" />
+								<Text style={style.listBtnText} > Bill History</Text>
+							</View>
+						</TouchableOpacity>
+
+					</View>
+
 					<View style={style.infoContainerWrapper}>
 
 						<View style={style.infoContainer} >
@@ -105,24 +133,6 @@ export const Profile = (props) => {
 						</View>
 					</View>
 
-					<View style={style.linkContainer} >
-
-						<TouchableOpacity onPress={() => props.navigation.navigate("Main")} style={style.linkTouch}>
-							<Icon style={style.linkIcon} name="home" size={14} />
-							<Text style={style.link}>Go To Home</Text>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={style.linkTouch} onPress={() => props.navigation.navigate("Services")}>
-							<Icon style={style.linkIcon} name="list" size={14} />
-							<Text style={style.link}>Browse Services</Text>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={style.linkTouch} onPress={logout}>
-							<Icon style={style.linkIcon} name="power" size={14} />
-							<Text style={style.link}>Log Out </Text>
-						</TouchableOpacity>
-
-					</View>
 				</>
 				}
 				{!loading && !user &&
@@ -134,6 +144,26 @@ export const Profile = (props) => {
 						}
 					</View>
 				}
+
+				<View style={style.linkContainer} >
+
+					<TouchableOpacity onPress={() => props.navigation.navigate("Main")} style={style.linkTouch}>
+						<Icon style={style.linkIcon} name="home" size={14} />
+						<Text style={style.link}>Go To Home</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={style.linkTouch} onPress={() => props.navigation.navigate("Services")}>
+						<Icon style={style.linkIcon} name="list" size={14} />
+						<Text style={style.link}>Browse Services</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={style.linkTouch} onPress={logout}>
+						<Icon style={style.linkIcon} name="power" size={14} />
+						<Text style={style.link}>Log Out </Text>
+					</TouchableOpacity>
+
+				</View>
+
 			</ScrollView>
 		</>
 	)
@@ -142,6 +172,7 @@ export const Profile = (props) => {
 export default Profile
 
 const style = StyleSheet.create({
+	
 	body: {
 		width: "100%",
 		paddingLeft: "5%",
@@ -150,7 +181,7 @@ const style = StyleSheet.create({
 	imageContainer: {
 		justifyContent: "center",
 		borderRadius: 300,
-		borderColor: "#369d9e77",
+		borderColor: "#359d9e77",
 		borderWidth: 2,
 		width: 160,
 		height: 160,
@@ -158,18 +189,33 @@ const style = StyleSheet.create({
 		alignContent: "center",
 		alignSelf: "center",
 		marginTop: 20,
-		marginBottom: 30
+		marginBottom: 10
 	},
 
 	userIcon: {
 		// alignItems: "center",
+	},
+	actionContainer:{
+		flexDirection: "row",
+		justifyContent: "space-around",
+		width: "100%",
+		marginBottom: 40
+	},
+	listBtn: {
+		flexDirection: "row",
+		justifyContent: "center",
+	},
+
+	listBtnText: {
+		color: "#359d9e",
+		fontSize: 14
 	},
 
 	heading: {
 		fontSize: 22,
 		fontWeight: "bold",
 		textAlign: "center",
-		color: "#369d9e",
+		color: "#359d9e",
 		fontFamily: "serif",
 	},
 
@@ -205,7 +251,7 @@ const style = StyleSheet.create({
 	},
 	infoTitle: {
 		fontSize: 20,
-		color: "#369d9e",
+		color: "#359d9e",
 		alignSelf: "center",
 		marginRight: 10
 	},
@@ -222,7 +268,7 @@ const style = StyleSheet.create({
 	},
 	link: {
 		fontSize: 15,
-		color: "#369d9e"
+		color: "#359d9e"
 	},
 	linkTouch: {
 		flexDirection: "row"
@@ -230,15 +276,16 @@ const style = StyleSheet.create({
 	linkIcon: {
 		marginTop: 3,
 		marginRight: 1,
-		color: "#369d9ebb"
+		color: "#359d9ebb"
 	},
-	notFoundMessage:{
-		justifyContent:"center",
-		alignSelf:"center",
-		alignItems:"center"
+	notFoundMessage: {
+		justifyContent: "center",
+		alignSelf: "center",
+		alignItems: "center"
 	},
-	notFoundText:{
+	notFoundText: {
 		margin: 5,
 		color: "#5d5d5d"
-	}
+	},
+	
 })

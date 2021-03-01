@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Image, View, StyleSheet, TouchableOpacity, Text } from 'react-native'
+import { Button, Image, View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { NavigationContainer } from '@react-navigation/native'
 import Home from '../screens/Home/Home'
@@ -19,7 +19,7 @@ export const DrawerLayout = () => {
   return (
     <NavigationContainer>
       <Drawer.Navigator 
-        drawerStyle={{ width: '100%', padding: 0, backgroundColor: '#369d9e88', color: "#fff" }}
+        drawerStyle={{ width: '80%', padding: 0, backgroundColor: '#359d9e', color: "#fff" }}
         drawerContent={(props) => <DrawerHeader {...props} />}
         >
 
@@ -49,7 +49,7 @@ const DrawerHeader = (props) => {
       <View style={style.linkView}>
 
         <TouchableOpacity style={style.linkTouch}
-          onPress={()=>props.navigation.navigate("Tab")}
+          onPress={()=>props.navigation.navigate("Tab", {screen:"Home"})}
         >
           <Icon style={style.icon} name="home" size={20} />
           <Text style={style.link}>Home</Text>
@@ -98,12 +98,30 @@ const DrawerHeader = (props) => {
         </TouchableOpacity>
 
 
+        <TouchableOpacity style={style.linkTouch} 
+          onPress={()=>props.navigation.navigate("Tab", {screen: "Home", params: {screen: "Authentication", params:{screen:"BillList"}}})}
+        >
+          <Icon style={style.icon} name="payments" size={20} />
+          <Text style={style.link}>Bill History</Text>
+        </TouchableOpacity>
+
+
 
         <TouchableOpacity style={style.linkTouch} 
           onPress={()=>props.navigation.navigate("Tab", {screen: "Home", params: {screen: "Authentication", params:{screen:"Profile"}}})}
         >
           <Icon style={style.icon} name="person" size={20} />
           <Text style={style.link}>My Account</Text>
+        </TouchableOpacity>
+
+
+
+
+        <TouchableOpacity style={style.hotline} 
+          onPress={()=>Linking.openURL(`tel:+880 1841 082727`)}
+        >
+          <Icon style={style.icon} name="call" size={20} />
+          <Text style={style.link}>+880 1841 082727</Text>
         </TouchableOpacity>
 
       </View>
@@ -120,29 +138,28 @@ const style = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 5,
-    // height: 190
   },
   headerView: {
     height: 200,
-    // width: "100%",
+    width: "100%",
     alignItems: "center",
     paddingTop: 40,
-    borderBottomWidth: 2,
-    borderColor: "#cccccc99",
+    borderBottomWidth: 1,
+    borderColor: "#fff7",
   },
   linkView:{
-    alignItems:"center"
+    alignItems:"flex-start"
   },
   linkTouch: {
     flexDirection: "row",
     padding: 5,
-    marginTop: 20,
+    marginTop: 10,
     paddingLeft: 20,
   },
   link: {
     color: "#fff",
-    fontSize: 20,
-    fontWeight:"bold",
+    fontSize: 18,
+    fontWeight:"normal",
     fontFamily:"serif"
   },
   icon: {
@@ -152,5 +169,16 @@ const style = StyleSheet.create({
   },
   drawerLink:{
     color: "#fff"
+  },
+  hotline:{
+    flexDirection: "row",
+    padding: 5,
+    marginTop: 40,
+    paddingLeft: 20,
+    width: "70%",
+    alignSelf: "center",
+    borderColor: "#fffc",
+    borderRadius: 5,
+    borderWidth: 1,
   }
 })

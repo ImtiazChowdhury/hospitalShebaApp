@@ -37,7 +37,8 @@ export const Discount = (props) => {
 
 			if (response.ok) {
 				const detail = await response.json()
-				
+				setLoading(false)
+
 				return detail
 			} else {
 
@@ -60,52 +61,52 @@ export const Discount = (props) => {
 	const _handleBarCodeRead = async result => {
 		if (result) {
 			LayoutAnimation.spring()
-			console.log(result.data)
-			if (result && result.data) {
+			if ( result.data) {
 				setQRData(result.data)
-
 			}
+			return
 		}
 	}
 
-	useEffect( () => {
-		(async ()=>{
-			if(QRData && QRData != null){
+	useEffect(() => {
+		(async () => {
+			if (QRData && QRData != null) {
 				const hospitalDetail = await getHospitalDetails(QRData)
-				
+
 				if (!hospitalDetail) {
 					setInfoBarText("Invalid QR Code")
 					setInfoBarVisible(true)
 					return
 				}
-				
+
 				setHospitalData(hospitalDetail);
 
 			}
 		})()
 	}, [QRData])
 
-	useEffect(()=>{
-		if(hospitalData){
-			props.navigation.navigate("BillImage", { hospital: hospitalData })
+	useEffect(() => {
+		if (hospitalData) {
+			props.navigation.push("BillImage", { hospital: hospitalData })
 		}
 	}, [hospitalData])
 
-	useEffect(()=>{
+	useEffect(() => {
 		setQRData(null);
 		setHospitalData(null)
-	})
-	
+		return ()=>{console.log("unmounted")}
+	}, [])
+
 	return (
 		<View style={styles.container}>
 
 			<Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
 				style={{ marginBottom: 35 }}
-			// action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+			action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
 			>
 				{infoBarText}
 			</Snackbar>
-		
+
 			{loading && <OverlayActivityIndicator />}
 
 			{hasCameraPermission === null ? (
@@ -117,11 +118,10 @@ export const Discount = (props) => {
 			) : (
 						<View style={styles.scannerContainer}>
 							<View style={styles.headingContainer}>
-								<Icon name="qr-code-outline" size={25} color="#369d9e" />
+								<Icon name="qr-code-outline" size={25} color="#359d9e" />
 								<Text style={styles.headingTitle}>Scan QR Code </Text>
 							</View>
 							<BarCodeScanner onBarCodeScanned={_handleBarCodeRead}
-								onBarCodeScanned={_handleBarCodeRead}
 								style={styles.scanner}
 							/>
 
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
 		fontSize: 22,
 		fontFamily: "serif",
 		marginLeft: 5,
-		color: "#369d9e"
+		color: "#359d9e"
 	},
 	subHeadingContainer: {
 		flexDirection: "row",

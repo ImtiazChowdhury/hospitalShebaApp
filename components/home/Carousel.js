@@ -12,7 +12,7 @@ export default class HomeCarousel extends React.Component {
 	}
 
 	render() {
-		const slides = this.props.slides
+		const slides = this.props.slides || []
 
 		// const images = slides.map(i=>require(i.cover.thumbnail));
 
@@ -24,7 +24,7 @@ export default class HomeCarousel extends React.Component {
 				images={slides}
 				customSlide={({ index, item, style, width }) => (
 					<View style={[style, styles.slideHolder]} key={index}>
-						<Image source={{ uri: item }} style={styles.imgFit} resizeMode="contain" />
+						<Image source={{ uri: item }} style={styles.imgFit} resizeMode="cover" />
 					</View>
 
 				)}

@@ -18,8 +18,6 @@ export const Home = ({ route, navigation }) => {
         "https://image.freepik.com/free-vector/coronavirus-test-kit-abstract-concept-vector-illustration-novel-coronavirus-diagnosis-covid-19-swipe-test-kit-ncov-testing-protocol-finding-antibodies-rapid-diagnostic-abstract-metaphor_335657-1599.jpg"
     ]
 
-    const location = navigator.geolocation.getCurrentPosition((params) => {
-    })
     return (
         <SafeAreaView >
 
@@ -44,7 +42,7 @@ export const Home = ({ route, navigation }) => {
                     <View style={style.halfOverlayCardContainer} >
 
                         <View style={style.halfOverlayCard}>
-                            <TouchableOpacity onPress={() => { navigation.navigate("Services") }}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("Services", { screen: "TestList" }) }}>
 
                                 <Image style={style.overlayImage} source={testImage} />
                                 <View style={style.overlayTitleView}>
@@ -55,7 +53,7 @@ export const Home = ({ route, navigation }) => {
                         </View>
 
                         <View style={style.halfOverlayCard}>
-                            <TouchableOpacity onPress={() => { navigation.navigate("Services") }}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("Services", { screen: "DoctorList" }) }}>
 
                                 <Image style={style.overlayImage} source={doctorImage} />
                                 <View style={style.overlayTitleView}>

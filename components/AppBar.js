@@ -34,7 +34,7 @@ export const AppBar = (props) => {
 
             <TouchableOpacity>
               <Icon name="search" size={24} style={style.searchIcon}
-                color="#369d9e" onPress={toggleSearch} />
+                color="#359d9e" onPress={toggleSearch} />
             </TouchableOpacity>
 
 
@@ -48,7 +48,7 @@ export const AppBar = (props) => {
 
           <View style={style.closeIconView}>
             <TouchableOpacity onPress={toggleSearch}>
-              <Icon name="arrow-back" size={24} color="#369d9e" style={style.closeIcon} />
+              <Icon name="arrow-back" size={24} color="#359d9e" style={style.closeIcon} />
             </TouchableOpacity>
           </View>
           <View style={style.searchBarView} >
@@ -81,7 +81,7 @@ const style = StyleSheet.create({
   },
   menuIcon: {
     padding: 5,
-    backgroundColor: "#369d9e",
+    backgroundColor: "#359d9e",
     borderRadius: 10
   },
   titleView:{
@@ -95,7 +95,7 @@ const style = StyleSheet.create({
   headerTitle: {
     fontFamily:"serif",
     fontSize: 20,
-    color: "#369d9e"
+    color: "#359d9e"
   },
   searchIcon: {
     marginRight: 15,
@@ -103,7 +103,7 @@ const style = StyleSheet.create({
   searchBarView: {
     width: "85%",
     borderRadius: 5,
-    borderColor: "#369d9e",
+    borderColor: "#359d9e",
     borderWidth: 1,
   },
   searchBar: {
