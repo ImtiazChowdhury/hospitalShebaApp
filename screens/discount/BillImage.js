@@ -90,6 +90,7 @@ export const BillImage = (props) => {
 
 			if (response.ok) {
 				const data = await response.json()
+				console.log(data)
 				setDiscountData(data[0]);
 			} else {
 				if (response.status >= 400 && response.status < 500) {
@@ -173,6 +174,7 @@ export const BillImage = (props) => {
 						<Text style={styles.successText} >
 							Bill Uploaded Successfully, please check out from the counter.
 						</Text>
+						<Text style={styles.code}>{discountData.shortCode}</Text>
 						<View style={{}}>
 							<Text style={styles.discountText}>
 								Discount Amount:  {discountData.discountAmount}%
@@ -383,4 +385,13 @@ const styles = StyleSheet.create({
 		lineHeight: 18,
 		fontSize: 14
 	}
+	,
+	code: {
+		fontSize: 18,
+		color: "#359d9e",
+		fontWeight: "bold",
+		fontFamily: "serif",
+		// width: "50%",
+		textAlign:"center"
+	},
 })
