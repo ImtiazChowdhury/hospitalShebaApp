@@ -11,7 +11,7 @@ function CategoryIcon(props) {
                 {cover && cover.thumbnail && 
                     <Image source={baseUrl + cover.thumbnail} style={style.image}/>
                 }
-                {!icon && 
+                {!cover && 
                     <Icon name="category" size={30} color="#3333" />
                 }
             </View>
