@@ -5,30 +5,26 @@ import { Card, Snackbar, Title, ActivityIndicator } from "react-native-paper"
 import Icon from "react-native-vector-icons/Ionicons"
 
 import DoctorImage from "../../assets/doctor2.png"
+import CategoryIcon from "./CategoryIcon"
 
 export const NearestDoctor = ({ navigation, route }) => {
 
-    const [tests, setTests] = useState([])
+    const [categories, setCategories] = useState([])
     const [alert, setAlert] = useState(false)
     const [loading, setLoading] = useState(true)
 
     async function loadNearestHospitals() {
         try {
             setLoading(true)
-            navigator.geolocation.getCurrentPosition(async loc => {
-                const response = await fetch(baseUrl + "/api/doctor?"
-                    + `latitude=${loc.coords && loc.coords.latitude}`
-                    + `&longitude=${loc.coords && loc.coords.longitude}`
-                    + "&limit=6&resolveDiseaseCategory=1&resolveHospital=1"
-                )
-                if (response.ok) {
-                    const list = await response.json()
-                    setTests(list.data)
-                } else {
-                    setAlert(true)
-                }
-                setLoading(false)
-            })
+            const response = await fetch(baseUrl + "/api/diseaseCategory?limit=9&page=1"
+            )
+            if (response.ok) {
+                const list = await response.json()
+                setCategories(list.data)
+            } else {
+                setAlert(true)
+            }
+            setLoading(false)
         } catch (err) {
             console.log(err)
             setAlert(true)
@@ -50,32 +46,22 @@ export const NearestDoctor = ({ navigation, route }) => {
 
             <View style={style.titleContainer}>
                 <Title style={style.heading}>Doctors</Title>
-                <TouchableOpacity onPress={() => { navigation.navigate("DoctorList") }}>
+                <TouchableOpacity onPress={() => { navigation.navigate("AllDoctorCategories") }}>
 
                     <View style={style.seeMoreView}>
-                        <Text style={style.seeMoreText}>See More</Text>
+                        <Text style={style.seeMoreText}>All Categories</Text>
                         <Icon style={style.seeMoreIcon} name="chevron-forward" color="#359d9e" size={16} />
                     </View>
                 </TouchableOpacity>
             </View>
             <View style={style.cardContainer}>
-                {tests.length > 0 && tests.map(i => (
-
-                    <Card style={style.hospitalCard} key={i._id}>
-                        <TouchableOpacity onPress={() => navigation.navigate("DoctorDetail", { doctor: i._id })}>
-                            <Card.Cover style={style.cardImage} source={i.cover && { uri:baseUrl + i.cover.medium } || DoctorImage}/>
-                            <View>
-                                <Text style={style.doctorName}>{i.name}</Text>
-                                <Text style={style.categoryName}>{i.diseaseCategory && i.diseaseCategory.name}</Text>
-                                <Text style={style.hospitalName}>{i.hospital && i.hospital.name}</Text>
-
-                            </View>
-                        </TouchableOpacity>
-                    </Card>
-
+                {categories.length > 0 && categories.map(i => (
+                    <TouchableOpacity key={i._id} onPress={()=>navigation.navigate("DoctorList", {category: i._id})}>
+                        <CategoryIcon category={i}  />
+                    </TouchableOpacity>
                 ))}
 
-                {!loading && !tests.length &&
+                {!loading && !categories.length &&
                     <View style={style.notFoundMessage} >
                         <Icon name="alert-circle-outline" size={75} color="#5d5d5d" />
                         <Text style={style.notFoundText}>No doctor found nearby</Text>
@@ -100,7 +86,7 @@ const style = StyleSheet.create({
         marginTop: 5,
         backgroundColor: "#fff"
     },
-    cardImage:{
+    cardImage: {
         backgroundColor: "#fff"
     },
     cardContainer: {
@@ -154,18 +140,20 @@ const style = StyleSheet.create({
     titleContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin: 5,
-        marginTop: 30,
-        padding: 5,
-        borderColor: "#d5d5d599",
-        borderWidth: 1,
-        borderRadius: 5,
-        alignItems: "center",
-        backgroundColor: "#359d9e22"
+        margin:2,
+        marginTop: 10,
+        padding:2,
+        paddingLeft: 5,
+        paddingRight: 5,
+        // borderColor: "#359d9e55",
+        // borderWidth:1,
+        // borderRadius:5,
+        alignItems:"center",
+		// backgroundColor:"#359d9e22"
 
     },
     heading: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "600",
         color: "#359d9e",
     },

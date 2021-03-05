@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Appbar } from 'react-native-paper'
 import { StyleSheet, TouchableOpacity, View, TextInput, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -9,12 +9,16 @@ export const AppBar = (props) => {
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState("")
 
+  const searchRef = useRef(null)
+
+  useEffect(() => { searchRef?.current?.focus() }, [searchRef])
+
   function toggleSearch() {
     setSearchOpen(prevState => !prevState)
   }
 
   function search() {
-    props.navigation.navigate("Services", {screen:"HospitalList", params:{query}})
+    props.navigation.navigate("Services", { screen: "HospitalList", params: { query } })
   }
 
   return (
@@ -38,7 +42,7 @@ export const AppBar = (props) => {
             </TouchableOpacity>
 
 
-            <UserAvatar {...props}/>
+            <UserAvatar {...props} />
 
           </View>
         </>
@@ -52,8 +56,12 @@ export const AppBar = (props) => {
             </TouchableOpacity>
           </View>
           <View style={style.searchBarView} >
-            <TextInput style={style.searchBar} value={query}
-              onChangeText={text => setQuery(text)} onSubmitEditing={search} />
+            <TextInput style={style.searchBar}
+              value={query}
+              onChangeText={text => setQuery(text)}
+              onSubmitEditing={search}
+              ref={searchRef}
+            />
           </View>
         </View>
       }
@@ -68,11 +76,11 @@ const style = StyleSheet.create({
   bar: {
     backgroundColor: "#fff",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     paddingTop: 50,
     paddingBottom: 20,
-    paddingLeft: 10,
-    paddingRight: 10,
+    // paddingLeft: 10,
+    // paddingRight: 10,
     height: 80,
     elevation: 3,
   },
@@ -80,20 +88,22 @@ const style = StyleSheet.create({
 
   },
   menuIcon: {
-    padding: 5,
+    padding: 4,
     backgroundColor: "#359d9e",
-    borderRadius: 10
+    paddingLeft: 8,
+    paddingRight: 8,
+    borderRadius: 5
   },
-  titleView:{
+  titleView: {
     // flex:1,
-    justifyContent:"center",
+    justifyContent: "center",
   },
   actions: {
     flexDirection: "row",
     justifyContent: "space-evenly",
   },
   headerTitle: {
-    fontFamily:"serif",
+    fontFamily: "serif",
     fontSize: 20,
     color: "#359d9e"
   },
@@ -101,7 +111,7 @@ const style = StyleSheet.create({
     marginRight: 15,
   },
   searchBarView: {
-    width: "85%",
+    width: "80%",
     borderRadius: 5,
     borderColor: "#359d9e",
     borderWidth: 1,
@@ -118,6 +128,7 @@ const style = StyleSheet.create({
   },
   closeIconView: {
     justifyContent: "center",
-    marginLeft: 10
+    // marginRight: 10,
+    width: "15%"
   }
 })

@@ -15,11 +15,10 @@ export const VerifyOTP = (props) => {
     const [infoBarText, setInfoBarText] = useState("")
     const [OTPId, setOTPId] = useState("")
     const [resentOTP, setResentOTP] = useState(false)
-    const [authToken, setAuthToken] = useState("") //for progressBar
 
     const codeRef = useRef(null);
 
-    useEffect(()=>{codeRef?.current?.focus()}, [codeRef])
+    useEffect(() => { codeRef?.current?.focus() }, [codeRef])
 
     function handleSubmit(e) {
         RequestVerifyOTP()
@@ -38,7 +37,7 @@ export const VerifyOTP = (props) => {
         try {
             setLoading(true)
 
-            const response = await fetch(baseUrl + '/api/register/verify', {
+            const response = await fetch(baseUrl + '/api/reset/verify', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -57,14 +56,12 @@ export const VerifyOTP = (props) => {
 
                 //signed in
                 try {
-                    AsyncStorage.setItem("authToken", OTP.authToken);
-                    props.navigation.navigate("SetInformation", {authToken: OTP.authToken})
-                    setAuthToken(OTP.authToken)
-                }catch(err){
+                    props.navigation.navigate("Reset", { OTPId: OTPId, verificationCode })
+                } catch (err) {
                     setInfoBarVisible(true);
                     setInfoBarText("Could not Store authentication data ")
                 }
-                
+
             } else {
                 if (response.status >= 400 && response.status < 500) {
                     const errorList = await response.json();
@@ -86,7 +83,7 @@ export const VerifyOTP = (props) => {
         try {
             setLoading(true)
 
-            const response = await fetch(baseUrl + '/api/register/initiate', {
+            const response = await fetch(baseUrl + '/api/reset/initiate', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -123,14 +120,14 @@ export const VerifyOTP = (props) => {
 
             <Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
                 style={{ marginBottom: 35 }}
-            action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+                action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
             >
                 {infoBarText}
             </Snackbar>
 
             {loading && <OverlayActivityIndicator />}
             <ScrollView style={style.body}>
-                <ProgressSteps stage={2} {...props} authToken={authToken}/>
+                <ProgressSteps stage={2} {...props} />
 
                 <View style={style.headerContainer}>
                     <Text style={style.heading}>Enter Code</Text>
@@ -138,11 +135,16 @@ export const VerifyOTP = (props) => {
                 </View>
 
                 <View style={style.imageContainer}>
-                    <Image style={style.image} source={require("../../assets/enterOTP1.jpg")} />
+                    <Image style={style.image} source={require("../../assets/verifyReset.png")} />
                 </View>
 
                 <Text style={style.subText}>
                     Enter the 6 digit code we sent to {props.route?.params?.OTP?.phone}
+                </Text>
+
+
+                <Text style={style.warningText}>
+                    The code will expire in 5 minutes
                 </Text>
 
                 {!resentOTP &&
@@ -158,10 +160,18 @@ export const VerifyOTP = (props) => {
                 {resentOTP &&
                     <View style={style.resendTextContainer}>
                         <Text style={style.resendText}>
-                            OTP was sent to your phone
+                            Reset code was sent to your phone
                         </Text>
                     </View>
                 }
+
+
+                {inputError.id &&
+                    <HelperText type="error" visible={inputError.id ? true : false} padding="none" style={{ textAlign: "center" }}>
+                        The code has expired!
+                    </HelperText>
+                }
+
 
                 <View style={style.phoneNumberInputContainer}>
 
@@ -186,11 +196,9 @@ export const VerifyOTP = (props) => {
 
 
                 <View style={style.infoTextContainer}>
-                    <Text style={style.infoText}>
-                        Already have an account?
-                </Text>
-                <TouchableOpacity onPress={()=>props.navigation.navigate("Login")}>
-                        <Text style={style.link}> Log In</Text>
+
+                    <TouchableOpacity onPress={() => props.navigation.navigate("Login")}>
+                        <Text style={style.link}> Try logging in again </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -206,6 +214,7 @@ const style = StyleSheet.create({
         width: "100%",
         paddingLeft: "5%",
         paddingRight: "5%",
+        marginBottom: 30
     },
     imageContainer: {
         width: "80%",
@@ -230,6 +239,12 @@ const style = StyleSheet.create({
         color: "#a1a1a1",
         marginTop: 15,
         fontSize: 15,
+    },
+    warningText: {
+        textAlign: "center",
+        color: "#a1a1a1",
+        marginTop: 0,
+        fontSize: 14,
     },
     headerContainer: {
         marginTop: 10,
@@ -282,11 +297,14 @@ const style = StyleSheet.create({
 
     infoText: {
         color: "#359d9e",
-        textAlign: "center"
+        textAlign: "center",
     },
+
     link: {
         color: "#359d9e",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        fontFamily: "serif"
+
     },
     infoTextContainer: {
         marginTop: 20,
@@ -294,7 +312,7 @@ const style = StyleSheet.create({
         justifyContent: "center",
     },
     resendTextContainer: {
-        marginTop: 0,
+        marginTop: 10,
         marginBottom: 10,
         flexDirection: "row",
         justifyContent: "center",

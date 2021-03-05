@@ -22,7 +22,6 @@ export const HospitalDetail = ({ navigation, route }) => {
 			setLoading(true)
 			let url = baseUrl + "/api/hospital/" + route.params.hospital;
 			const response = await fetch(url)
-			console.log(url);
 			if (response.ok) {
 				const detail = await response.json()
 				setHospital(detail)
@@ -41,7 +40,6 @@ export const HospitalDetail = ({ navigation, route }) => {
 			setLoading(true)
 			let url = baseUrl + "/api/doctor?hospital=" + route.params.hospital;
 			const response = await fetch(url)
-			console.log(url);
 			if (response.ok) {
 				const list = await response.json()
 				setDoctorList(list.data)
@@ -59,7 +57,6 @@ export const HospitalDetail = ({ navigation, route }) => {
 			setLoading(true)
 			let url = baseUrl + "/api/service?hospital=" + route.params.hospital;
 			const response = await fetch(url)
-			console.log(url);
 			if (response.ok) {
 				const list = await response.json()
 				setTestList(list.data)

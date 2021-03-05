@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { HelperText, Snackbar } from "react-native-paper"
 import ProgressSteps from "../../components/authentication/ProgressSteps"
@@ -19,10 +19,16 @@ export const SetInformation = (props) => {
     const [OTPId, setOTPId] = useState("")
     const [resentOTP, setResentOTP] = useState(false)
 
+    const nameRef = useRef(null)
+    const passRef= useRef(null)
+    const passRepeatRef = useRef(null)
 
     function handleSubmit(e) {
         RequestVerifyOTP()
     }
+    useEffect(()=>{
+        nameRef?.current?.focus()
+    }, [nameRef])
 
     useEffect(() => {
         if (!props.route || !props.route.params || !props.route.params.authToken) {
@@ -118,6 +124,10 @@ export const SetInformation = (props) => {
                         onChangeText={text => setUserName(text)}
                         placeholder="Your Full Name"
                         maxLength={40}
+                        returnKeyType="next"
+                        blurOnSubmit={false}
+                        onSubmitEditing={()=>passRef.current.focus()}
+                        ref={nameRef}
                     />
                     {inputError.userName &&
                         <HelperText type="error" visible={inputError.userName ? true : false} padding="none">
@@ -131,6 +141,11 @@ export const SetInformation = (props) => {
                         onChangeText={text => setPassword(text)}
                         placeholder="Set password"
                         maxLength={40}
+                        ref={passRef}
+                        returnKeyType="next"
+                        blurOnSubmit={false}
+                        secureTextEntry={true}
+                        onSubmitEditing={()=>passRepeatRef.current.focus()}
                     />
                     {inputError.password &&
                         <HelperText type="error" visible={inputError.password ? true : false} padding="none">
@@ -145,6 +160,9 @@ export const SetInformation = (props) => {
                         onChangeText={text => setRepeatPassword(text)}
                         placeholder="Repeat Password"
                         maxLength={40}
+                        onSubmitEditing={handleSubmit}
+                        secureTextEntry={true}
+                        ref={passRepeatRef}
                     />
                     {inputError.repeatPassword &&
                         <HelperText type="error" visible={inputError.repeatPassword ? true : false} padding="none">

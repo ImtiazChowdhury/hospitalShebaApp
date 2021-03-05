@@ -10,6 +10,7 @@ import AppBar from "../components/AppBar"
 import HospitalDetail from "../screens/Services/HospitalDetail";
 import DoctorDetail from "../screens/Services/DoctorDetail";
 import TestDetail from "../screens/Services/TestDetail";
+import AllDoctorCategories from "../screens/Services/AllDoctorCategories";
 
 
 export const ServicesLayout = (props) => {
@@ -22,9 +23,12 @@ export const ServicesLayout = (props) => {
             <stack.Screen name="AllServices" component={Services} options={{
                 title:"Services"
             }}/>
+            <stack.Screen name="AllDoctorCategories" component={AllDoctorCategories} />
+
             <stack.Screen name="HospitalList" component={HospitalList} />
             <stack.Screen name="DoctorList" component={DoctorList} />
             <stack.Screen name="TestList" component={TestList} />
+
 
 
             <stack.Screen name="HospitalDetail" component={HospitalDetail} />

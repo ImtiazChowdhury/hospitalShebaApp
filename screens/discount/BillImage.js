@@ -75,7 +75,6 @@ export const BillImage = (props) => {
 
 		form.append("hospital", props.route.params.hospital._id)
 		form.append("bill", photo)
-		console.log(photo, form)
 
 		try {
 			setLoading(true);

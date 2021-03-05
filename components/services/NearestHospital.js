@@ -26,10 +26,7 @@ export const NearestHospital = ({ navigation, route }) => {
 			setLoading(true)
 
 			navigator.geolocation.getCurrentPosition(async loc => {
-				console.log(baseUrl + "/api/hospital?"
-					+ `latitude=${loc.coords && loc.coords.latitude}`
-					+ `&longitude=${loc.coords && loc.coords.longitude}`
-					+ "&limit=6&sort=distance")
+				
 				const response = await fetch(baseUrl + "/api/hospital?"
 					+ `latitude=${loc.coords && loc.coords.latitude}`
 					+ `&longitude=${loc.coords && loc.coords.longitude}`
@@ -144,25 +141,26 @@ const style = StyleSheet.create({
 		padding: 5,
 		textAlign: "center",
 	},
-
 	titleContainer: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		margin: 5,
-		marginTop: 10,
-		padding: 5,
-		borderColor: "#d5d5d599",
-		borderWidth: 1,
-		borderRadius: 5,
-		alignItems: "center",
-		backgroundColor:"#359d9e18"
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin:2,
+        marginTop: 20,
+        padding:2,
+        paddingLeft: 5,
+        paddingRight: 5,
+        // borderColor: "#359d9e55",
+        // borderWidth:1,
+        // borderRadius:5,
+        alignItems:"center",
+		// backgroundColor:"#359d9e22"
 
-	},
-	heading: {
-		fontSize: 20,
-		fontWeight: "600",
-		color: "#359d9e",
-	},
+    },
+    heading: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#359d9e",
+    },
 	seeMoreView: {
 		flexDirection: "row",
 		alignItems: "center",

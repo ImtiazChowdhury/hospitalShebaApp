@@ -94,7 +94,6 @@ export const Discount = (props) => {
 	useEffect(() => {
 		setQRData(null);
 		setHospitalData(null)
-		return ()=>{console.log("unmounted")}
 	}, [])
 
 	return (

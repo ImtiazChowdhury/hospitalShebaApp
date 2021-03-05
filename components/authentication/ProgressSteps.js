@@ -6,21 +6,24 @@ export const ProgressSteps = (props) => {
         <View style={barStyle}>
 
             <TouchableOpacity
-                onPress={() => props.navigation.navigate("InitiateOTP")} {...props}>
+                // onPress={() => props.navigation.navigate("InitiateOTP")} 
+                {...props}>
                 <Text style={props.stage >= 1 ? filledTextStyle : blankTextStyle}>1</Text>
             </TouchableOpacity>
 
             <View style={props.stage >= 2 ? filledViewStyle : blankViewStyle}></View>
 
             <TouchableOpacity
-                onPress={() => props.navigation.navigate("VerifyOTP", { OTP: props.OTP })} {...props}>
+                // onPress={() => props.navigation.navigate("VerifyOTP", { OTP: props.OTP })} 
+                {...props}>
                 <Text style={props.stage >= 2 ? filledTextStyle : blankTextStyle}>2</Text>
             </TouchableOpacity>
 
             <View style={props.stage >= 3 ? filledViewStyle : blankViewStyle}></View>
 
             <TouchableOpacity
-                onPress={() => props.navigation.navigate("SetInformation", { authToken: props.authToken })} {...props}>
+                // onPress={() => props.navigation.navigate("SetInformation", { authToken: props.authToken })} 
+                {...props}>
                 <Text style={props.stage >= 3 ? filledTextStyle : blankTextStyle}>3</Text>
             </TouchableOpacity>
 

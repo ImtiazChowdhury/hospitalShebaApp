@@ -52,7 +52,7 @@ export const NearestTest = ({navigation, route}) => {
             </Snackbar>
 
             <View style={style.titleContainer}>
-                <Title style={style.heading}>Doctors</Title>
+                <Title style={style.heading}>Disgnostic Services</Title>
                 <TouchableOpacity onPress={()=>{navigation.navigate("TestList")}}>
 
                     <View style={style.seeMoreView}>
@@ -118,7 +118,7 @@ const style = StyleSheet.create({
         color: "#5d5d5d"
     },
     heading: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "600",
         color: "#359d9e",
         marginTop: 20,
@@ -157,22 +157,23 @@ const style = StyleSheet.create({
         alignItems: "center",
         paddingTop: 70
     },
-    
     titleContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin:5,
-        marginTop: 30,
-        padding:5,
-        borderColor: "#d5d5d599",
-        borderWidth:1,
-        borderRadius:5,
+        margin:2,
+        marginTop: 20,
+        padding:2,
+        paddingLeft: 5,
+        paddingRight: 5,
+        // borderColor: "#359d9e55",
+        // borderWidth:1,
+        // borderRadius:5,
         alignItems:"center",
-		backgroundColor:"#359d9e22"
+		// backgroundColor:"#359d9e22"
 
     },
     heading: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: "600",
         color: "#359d9e",
     },

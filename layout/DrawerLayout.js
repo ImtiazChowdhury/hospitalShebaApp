@@ -18,10 +18,10 @@ export const DrawerLayout = () => {
   const Drawer = createDrawerNavigator()
   return (
     <NavigationContainer>
-      <Drawer.Navigator 
+      <Drawer.Navigator
         drawerStyle={{ width: '80%', padding: 0, backgroundColor: '#359d9e', color: "#fff" }}
         drawerContent={(props) => <DrawerHeader {...props} />}
-        >
+      >
 
         <Drawer.Screen name="Tab" component={TabLayout} options={{ title: "Home" }} />
         <Drawer.Screen name="Services" component={ServicesLayout} />
@@ -49,15 +49,15 @@ const DrawerHeader = (props) => {
       <View style={style.linkView}>
 
         <TouchableOpacity style={style.linkTouch}
-          onPress={()=>props.navigation.navigate("Tab", {screen:"Home"})}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Home" })}
         >
           <Icon style={style.icon} name="home" size={20} />
           <Text style={style.link}>Home</Text>
         </TouchableOpacity>
 
-        
+
         <TouchableOpacity style={style.linkTouch}
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Discount"})}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Discount" })}
         >
           <Icon style={style.icon} name="qr-code" size={20} />
           <Text style={style.link}>Get Discount</Text>
@@ -65,7 +65,7 @@ const DrawerHeader = (props) => {
 
 
         <TouchableOpacity style={style.linkTouch}
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Services"})}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Services" })}
         >
           <Icon style={style.icon} name="category" size={20} />
           <Text style={style.link}>All Services</Text>
@@ -73,16 +73,16 @@ const DrawerHeader = (props) => {
 
 
         <TouchableOpacity style={style.linkTouch}
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Services", params: {screen: "HospitalList"}})}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Services", params: { screen: "HospitalList" } })}
         >
           <Icon style={style.icon} name="business" size={20} />
           <Text style={style.link}>Hospitals</Text>
         </TouchableOpacity>
 
-        
 
-        <TouchableOpacity style={style.linkTouch} 
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Services", params: {screen: "DoctorList"}})}
+
+        <TouchableOpacity style={style.linkTouch}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Services", params: { screen: "DoctorList" } })}
         >
           <Icon style={style.icon} name="groups" size={20} />
           <Text style={style.link}>Doctors</Text>
@@ -91,15 +91,15 @@ const DrawerHeader = (props) => {
 
 
         <TouchableOpacity style={style.linkTouch}
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Services", params: {screen: "TestList"}})}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Services", params: { screen: "TestList" } })}
         >
           <Icon style={style.icon} name="medical-services" size={20} />
           <Text style={style.link}>Diagnostic</Text>
         </TouchableOpacity>
 
 
-        <TouchableOpacity style={style.linkTouch} 
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Home", params: {screen: "Authentication", params:{screen:"BillList"}}})}
+        <TouchableOpacity style={style.linkTouch}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Home", params: { screen: "Authentication", params: { screen: "BillList" } } })}
         >
           <Icon style={style.icon} name="payments" size={20} />
           <Text style={style.link}>Bill History</Text>
@@ -107,8 +107,8 @@ const DrawerHeader = (props) => {
 
 
 
-        <TouchableOpacity style={style.linkTouch} 
-          onPress={()=>props.navigation.navigate("Tab", {screen: "Home", params: {screen: "Authentication", params:{screen:"Profile"}}})}
+        <TouchableOpacity style={style.linkTouch}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Home", params: { screen: "Authentication", params: { screen: "Profile" } } })}
         >
           <Icon style={style.icon} name="person" size={20} />
           <Text style={style.link}>My Account</Text>
@@ -117,12 +117,14 @@ const DrawerHeader = (props) => {
 
 
 
-        <TouchableOpacity style={style.hotline} 
-          onPress={()=>Linking.openURL(`tel:+880 1841 082727`)}
+        <TouchableOpacity style={style.hotline}
+          onPress={() => Linking.openURL(`tel:+880 1841 082727`)}
         >
           <Icon style={style.icon} name="call" size={20} />
           <Text style={style.link}>+880 1841 082727</Text>
+
         </TouchableOpacity>
+        <Text style={style.miniText}>Hospital Sheba Hotline</Text>
 
       </View>
     </ScrollView>
@@ -147,8 +149,8 @@ const style = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#fff7",
   },
-  linkView:{
-    alignItems:"flex-start"
+  linkView: {
+    alignItems: "flex-start"
   },
   linkTouch: {
     flexDirection: "row",
@@ -159,26 +161,42 @@ const style = StyleSheet.create({
   link: {
     color: "#fff",
     fontSize: 18,
-    fontWeight:"normal",
-    fontFamily:"serif"
+    fontWeight: "normal",
+    fontFamily: "serif"
   },
   icon: {
     color: "#fff",
     marginRight: 5,
     marginTop: 4
   },
-  drawerLink:{
+  drawerLink: {
     color: "#fff"
   },
-  hotline:{
+  hotline: {
     flexDirection: "row",
+    flexWrap: "wrap",
     padding: 5,
     marginTop: 40,
-    paddingLeft: 20,
+    // paddingLeft: 20,
+    // alignContent:"center",
+    // alignItems:"center",
+    justifyContent:"center",
     width: "70%",
     alignSelf: "center",
     borderColor: "#fffc",
     borderRadius: 5,
     borderWidth: 1,
+  },
+  miniText:{
+    color: "#eeee",
+    textAlign:"center",
+    alignSelf:"center",
+    fontSize: 11,
+    fontFamily:"serif",
+    marginTop: -10,
+    backgroundColor: "#359d9e",
+    paddingLeft: 2,
+    paddingRight: 2,
+    // marginRight: -120
   }
 })

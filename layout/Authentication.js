@@ -10,6 +10,11 @@ import BillList from "../screens/authentication/BillList"
 import BillDetail from "../screens/authentication/BillDetail"
 import EditProfile from "../screens/authentication/EditProfile"
 import ChangePassword from "../screens/authentication/ChangePassword"
+import InitiateReset from "../screens/authentication/InitiateReset";
+import VerifyReset from "../screens/authentication/VerifyReset";
+import Reset from "../screens/authentication/Reset";
+
+
 
 
 import AppBar from "../components/AppBar"
@@ -27,6 +32,9 @@ export const AuthenticationLayout = (props)=>{
             <stack.Screen name="InitiateOTP" component={InitiateOTP}/>
             <stack.Screen name="VerifyOTP" component={VerifyOTP}/>
             <stack.Screen name="SetInformation" component={SetInformation}/>
+            <stack.Screen name="InitiateReset" component={InitiateReset}/>
+            <stack.Screen name="VerifyReset" component={VerifyReset}/>
+            <stack.Screen name="Reset" component={Reset}/>
             <stack.Screen name="Login" component={Login}/>
             <stack.Screen name="Profile" component={Profile}/>
             <stack.Screen name="BillList" component={BillList}/>

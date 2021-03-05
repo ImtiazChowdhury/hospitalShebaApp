@@ -5,7 +5,6 @@ import { Card } from "react-native-paper"
 import { baseUrl } from "../../config.json"
 import HospitalListSearch from "../../components/services/HospitalListSearch"
 import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
-import { set } from "react-native-reanimated"
 
 export const DoctorList = ({ navigation, route }) => {
 
@@ -24,7 +23,7 @@ export const DoctorList = ({ navigation, route }) => {
 	const [query, setQuery] = useState("")
 	const [selectedDistrict, setSelectedDistrict] = useState("")
 	const [selectedZone, setSelectedZone] = useState("")
-	const [selectedDiseaseCategory, setDiseaseCategory] = useState("")
+	const [selectedDiseaseCategory, setDiseaseCategory] = useState(route?.params?.category)
 
 	useEffect(() => {
 		if (route.params && route.params.query) {
@@ -74,7 +73,6 @@ export const DoctorList = ({ navigation, route }) => {
 				if (selectedDiseaseCategory) {
 					url += "&diseaseCategory=" + selectedDiseaseCategory
 				}
-				console.log(url)
 				const response = await fetch(url)
 
 				if (response.ok) {
@@ -153,7 +151,7 @@ export const DoctorList = ({ navigation, route }) => {
 	return (
 		<SafeAreaView >
 
-			<HospitalListSearch handleInput={handleInput} formData={formData} handleSubmit={handleSubmit} />
+			<HospitalListSearch handleInput={handleInput} formData={formData} handleSubmit={handleSubmit} type="doctor" />
 			{loading &&
 				<OverlayActivityIndicator />
 			}

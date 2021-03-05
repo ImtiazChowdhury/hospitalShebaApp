@@ -7,7 +7,7 @@ import { baseUrl } from "../../config.json"
 
 export const InitiateOTP = (props) => {
 
-	const [phone, setPhone] = useState("")
+	const [phone, setPhone] = useState(props.route?.params?.phone)
 	const [loading, setLoading] = useState(false)
 	const [inputError, setInputError] = useState({})
 	const [infoBarVisible, setInfoBarVisible] = useState(false)
@@ -16,8 +16,8 @@ export const InitiateOTP = (props) => {
 
 	const phoneRef = useRef(null);
 
-	useEffect(()=>{
-		phoneRef?.current?.focus()
+	useEffect(() => {
+		if(!phone) phoneRef?.current?.focus()
 	}, [phoneRef])
 
 	function handleSubmit(e) {
@@ -29,7 +29,7 @@ export const InitiateOTP = (props) => {
 		try {
 			setLoading(true)
 
-			const response = await fetch(baseUrl + '/api/register/initiate', {
+			const response = await fetch(baseUrl + '/api/reset/initiate', {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
@@ -42,7 +42,7 @@ export const InitiateOTP = (props) => {
 				const OTP = await response.json()
 				setInputError({})
 				setOTP(OTP)
-				props.navigation.navigate("VerifyOTP", { OTP: OTP[0] })
+				props.navigation.navigate("VerifyReset", { OTP: OTP[0] })
 			} else {
 				if (response.status >= 400 && response.status < 500) {
 					setInputError(await response.json())
@@ -64,7 +64,7 @@ export const InitiateOTP = (props) => {
 
 			<Snackbar visible={infoBarVisible} onDismiss={() => { setInfoBarVisible(false) }}
 				style={{ marginBottom: 35 }}
-			action={{ label: 'Ok', onPress: () =>{ setInfoBarVisible(false)}}}
+				action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
 			>
 				{infoBarText}
 			</Snackbar>
@@ -75,16 +75,16 @@ export const InitiateOTP = (props) => {
 				<ProgressSteps stage={1} {...props} OTP={OTP} />
 
 				<View style={style.headerContainer}>
-					<Text style={style.heading}>Register Phone Number</Text>
+					<Text style={style.heading}>Forgot Password?</Text>
 
 				</View>
 
 				<View style={style.imageContainer}>
-					<Image style={style.image} source={require("../../assets/register2.jpg")} />
+					<Image style={style.image} source={require("../../assets/forgotPassword.png")} />
 				</View>
 
 				<Text style={style.subText}>
-					Enter your phone number to register new account and get OTP through SMS
+					Enter your phone number to get password reset code trough SMS
 				</Text>
 
 				<View style={style.phoneNumberInputContainer}>
@@ -94,7 +94,7 @@ export const InitiateOTP = (props) => {
 						placeholder="01*********" maxLength={11}
 						keyboardType="numeric"
 						ref={phoneRef}
-                        returnKeyType="next"
+						returnKeyType="next"
 						onSubmitEditing={handleSubmit}
 					/>
 					<HelperText type="error" visible={inputError.phone ? true : false} padding="none">
@@ -106,34 +106,15 @@ export const InitiateOTP = (props) => {
 
 				<View style={style.submitButtonContainer}>
 					<TouchableOpacity onPress={handleSubmit}>
-						<Text style={style.submitButton}>REGISTER</Text>
+						<Text style={style.submitButton}>Reset Password</Text>
 					</TouchableOpacity>
 				</View>
 
 				<View style={style.infoTextContainer}>
-					<Text style={style.infoText}>
-						Already have an account?
-                </Text>
+
 					<TouchableOpacity onPress={() => props.navigation.navigate("Login")}>
-						<Text style={style.link}> Log In</Text>
+						<Text style={style.link}>Try logging in again</Text>
 					</TouchableOpacity>
-				</View>
-
-				<View style={style.agreeTextView}>
-
-					<Text style={[style.subText, style.textStart]} >
-						By registering you are agreeing to our
-                </Text>
-					<TouchableOpacity >
-						<Text style={[style.pageLink, style.subText]}> Terms of Service</Text>
-					</TouchableOpacity>
-
-					<Text style={[style.subText]}> and </Text>
-
-					<TouchableOpacity >
-						<Text style={[style.pageLink, style.subText]}>Privacy Policy</Text>
-					</TouchableOpacity>
-
 				</View>
 
 
@@ -188,7 +169,7 @@ const style = StyleSheet.create({
 	},
 	phoneNumberInputContainer: {
 		marginTop: 20,
-		marginBottom: 0,
+		marginBottom: 10,
 	},
 	phoneError: {
 		marginLeft: 0
@@ -216,8 +197,6 @@ const style = StyleSheet.create({
 		color: "#fff",
 		textAlign: "center",
 		padding: 5,
-		// width: "50%",
-		// alignSelf: "center",
 		fontFamily: "serif"
 	},
 	submitButtonContainer: {
@@ -229,14 +208,13 @@ const style = StyleSheet.create({
 
 	infoText: {
 		color: "#359d9e",
-		textAlign: "center",
-		fontSize: 16
+		textAlign: "center"
 	},
 	link: {
 		color: "#359d9e",
-		fontWeight: "bold",
-		fontSize: 16
-
+		// fontWeight: "bold",
+		fontSize: 16,
+		fontFamily: "serif"
 	},
 	infoTextContainer: {
 		marginTop: 20,

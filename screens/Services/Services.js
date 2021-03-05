@@ -12,8 +12,8 @@ export const Services = (props) => {
 
             <ScrollView >
                 <InPageSearchBar {...props}/>
-                <NearestHospital {...props}/>
                 <NearestDoctor {...props}/>
+                <NearestHospital {...props}/>
                 <NearestTest {...props}/>
                 <View style={{height: 60}} >
                     <Text>{/*:D */}</Text>    

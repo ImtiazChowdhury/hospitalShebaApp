@@ -5,29 +5,26 @@ import ProgressSteps from "../../components/authentication/ProgressSteps"
 import OverlayActivityIndicator from "../../components/OverlayActivityIndicator"
 import { baseUrl } from "../../config.json"
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import Icon from "react-native-vector-icons/Ionicons"
 
-export const Login = (props) => {
+export const SetInformation = (props) => {
 
-    const [phone, setPhone] = useState("")
     const [password, setPassword] = useState("")
+    const [repeatPassword, setRepeatPassword] = useState("")
 
     const [loading, setLoading] = useState(false)
     const [inputError, setInputError] = useState({})
     const [infoBarVisible, setInfoBarVisible] = useState(false)
     const [infoBarText, setInfoBarText] = useState("")
 
-
-    const phoneRef = useRef(null);
-    const passRef = useRef(null);
-
-    useEffect(() => {
-        phoneRef?.current?.focus()
-    }, [])
+    const passRef = useRef(null)
+    const passRepeatRef = useRef(null)
 
     function handleSubmit(e) {
         RequestVerifyOTP()
     }
+    useEffect(() => {
+        passRef?.current?.focus()
+    }, [passRef])
 
     useEffect(() => {
         if (!props.route || !props.route.params || !props.route.params.authToken) {
@@ -38,34 +35,44 @@ export const Login = (props) => {
 
     async function RequestVerifyOTP() {
         try {
+
+            if (!password) {
+                return setInputError({ password: "Enter password" })
+            }
+            if (!repeatPassword) {
+                return setInputError({ repeatPassword: "Enter password again" })
+            }
+            if (password !== repeatPassword) {
+                return setInputError({ repeatPassword: "Passwords do not match" })
+            }
+
             setLoading(true)
 
-            const response = await fetch(baseUrl + '/api/login', {
+            const response = await fetch(baseUrl + '/api/reset/setPassword', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ phone, password })
+                body: JSON.stringify({
+                    id: props.route?.params?.OTPId,
+                    verificationCode: props?.route?.params?.verificationCode,
+                    password: password
+                })
 
             })
 
             if (response.ok) {
                 const OTP = await response.json()
                 setInputError({})
-
-                //signed in
-                try {
-                    AsyncStorage.setItem("authToken", OTP.authToken)
-                    props.navigation.push("Profile")
-                } catch (err) {
-                    setInfoBarVisible(true)
-                    setInfoBarText("Could not Store authentication data ")
-                }
-
+                props.navigation.push("Login", { fromReset: true });
             } else {
-                if (response.status >= 400 && response.status < 500) {
-                    let error = await response.json();
+                if (response.status == 403) {
+                    setInfoBarVisible(true);
+                    setInfoBarText("Authorization Error")
+                }
+                else if (response.status >= 400 && response.status < 500) {
+                    const error = await response.json()
                     console.log(error)
                     setInputError(error)
                 } else if (response.status >= 500 && response.status < 600) {
@@ -82,7 +89,6 @@ export const Login = (props) => {
     }
 
 
-
     return (
         <>
 
@@ -95,55 +101,38 @@ export const Login = (props) => {
 
             {loading && <OverlayActivityIndicator />}
             <ScrollView style={style.body}>
+                <ProgressSteps stage={3} {...props} />
 
                 <View style={style.headerContainer}>
-                    <Text style={style.heading}>Welcome Back</Text>
+                    <Text style={style.heading}>Verified</Text>
                 </View>
 
                 <View style={style.imageContainer}>
-                    <Image style={style.image} source={require("../../assets/login1.jpg")} />
+                    <Image style={style.image} source={require("../../assets/reset.png")} />
                 </View>
 
-                <Text style={style.subText}>
-                    Log In To Your Account
-                </Text>
 
-                {props.route?.params?.fromReset &&
-                    <Text style={style.subText2}>
-                        Password was reset successfully
-                    </Text>
+                <View style={style.headerContainer}>
+                    <Text style={style.heading2}>Set new password</Text>
+                </View>
+
+                {inputError.id &&
+                    <HelperText type="error" visible={inputError.id ? true : false} padding="none" style={{textAlign:"center"}}>
+                        The code has expired!
+                    </HelperText>
                 }
 
                 <View style={style.inputContainer}>
 
-                    <TextInput style={style.input} value={phone}
-                        onChangeText={text => setPhone(text)}
-                        placeholder="Phone number"
-                        maxLength={11}
-                        keyboardType="numeric"
-                        ref={phoneRef}
-                        returnKeyType="next"
-                        blurOnSubmit={false}
-                        onSubmitEditing={() => { passRef.current.focus() }}
-                    />
-                    {inputError.phone &&
-                        <HelperText type="error" visible={inputError.phone ? true : false} padding="none">
-                            {inputError.phone}
-                        </HelperText>
-                    }
-                </View>
-
-                <View style={style.inputContainer}>
-
                     <TextInput style={style.input} value={password}
-                        secureTextEntry={true}
                         onChangeText={text => setPassword(text)}
-                        placeholder="Password"
+                        placeholder="Set password"
                         maxLength={40}
                         ref={passRef}
-                        returnKeyType="done"
-                        // returnKeyLabel="Login"
-                        onSubmitEditing={handleSubmit}
+                        returnKeyType="next"
+                        blurOnSubmit={false}
+                        secureTextEntry={true}
+                        onSubmitEditing={() => passRepeatRef.current.focus()}
                     />
                     {inputError.password &&
                         <HelperText type="error" visible={inputError.password ? true : false} padding="none">
@@ -152,19 +141,29 @@ export const Login = (props) => {
                     }
                 </View>
 
-                <View style={style.submitButtonContainer}>
-                    <TouchableOpacity onPress={handleSubmit}>
-                        <Text style={style.submitButton}>Login </Text>
-                    </TouchableOpacity>
+
+                <View style={style.inputContainer}>
+
+                    <TextInput style={style.input} value={repeatPassword}
+                        onChangeText={text => setRepeatPassword(text)}
+                        placeholder="Repeat Password"
+                        maxLength={40}
+                        onSubmitEditing={handleSubmit}
+                        secureTextEntry={true}
+                        ref={passRepeatRef}
+                    />
+                    {inputError.repeatPassword &&
+                        <HelperText type="error" visible={inputError.repeatPassword ? true : false} padding="none">
+                            {inputError.repeatPassword}
+                        </HelperText>
+                    }
+
+
                 </View>
 
-
-                <View style={style.infoTextContainer}>
-                    <TouchableOpacity onPress={() => props.navigation.navigate("InitiateReset", { phone: phone })}>
-                        <Text style={style.link}> Forgot Password</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate("InitiateOTP")}>
-                        <Text style={style.link}> Register Account</Text>
+                <View style={style.submitButtonContainer}>
+                    <TouchableOpacity onPress={handleSubmit}>
+                        <Text style={style.submitButton}>Reset Password</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -173,7 +172,7 @@ export const Login = (props) => {
     )
 }
 
-export default Login
+export default SetInformation
 
 const style = StyleSheet.create({
     body: {
@@ -212,19 +211,7 @@ const style = StyleSheet.create({
         textAlign: "center",
         color: "#a1a1a1",
         marginTop: 5,
-        fontSize: 16,
-        marginTop: 20,
-        marginBottom: 5,
-        fontFamily: "serif"
-    },
-    subText2: {
-        textAlign: "center",
-        color: "#a1a1a1",
-        marginTop: 5,
-        fontSize: 16,
-        marginTop: 5,
-        marginBottom: 20,
-        fontFamily: "serif"
+        fontSize: 12
     },
     headerContainer: {
         marginTop: 10,
@@ -241,8 +228,8 @@ const style = StyleSheet.create({
         fontFamily: "serif"
     },
     inputContainer: {
-        marginTop: 10,
-        marginBottom: 0,
+        marginTop: 5,
+        marginBottom: 5,
     },
     phoneError: {
         marginLeft: 0
@@ -273,7 +260,7 @@ const style = StyleSheet.create({
     },
     submitButtonContainer: {
         marginTop: 20,
-        // marginBottom: 50
+        marginBottom: 50
     },
     textCenter: {
         textAlign: "center"
@@ -281,18 +268,16 @@ const style = StyleSheet.create({
 
     infoText: {
         color: "#359d9e",
-        textAlign: "center",
-        fontFamily: "serif"
+        textAlign: "center"
     },
     link: {
         color: "#359d9e",
-        // fontWeight: "bold",
-        fontFamily: "serif"
+        fontWeight: "bold"
     },
     infoTextContainer: {
         marginTop: 20,
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "center",
     },
     resendTextContainer: {
         marginTop: 0,

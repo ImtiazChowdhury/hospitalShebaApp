@@ -54,7 +54,7 @@ export const Profile = (props) => {
 
 	async function logout() {
 		await AsyncStorage.removeItem("authToken")
-		props.navigation.navigate("Login")
+		props.navigation.push("Login")
 	}
 
 

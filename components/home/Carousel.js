@@ -5,16 +5,10 @@ import ImageSlider from 'react-native-image-slider'
 const window = Dimensions.get('window')
 
 export default class HomeCarousel extends React.Component {
-	constructor(props) {
-		super(props)
-		this.props = props
-		console.log(props)
-	}
+	
 
 	render() {
 		const slides = this.props.slides || []
-
-		// const images = slides.map(i=>require(i.cover.thumbnail));
 
 		return (
 			<ImageSlider

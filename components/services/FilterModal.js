@@ -66,7 +66,7 @@ export const FilterModal = (props) => {
                 onChangeText={(text) => props.handleInput("query", text)} />
             </View>
 
-
+{/* 
             <View style={style.pickerContainer} >
               <Text style={style.pickerLabel}>Search For</Text>
 
@@ -79,7 +79,7 @@ export const FilterModal = (props) => {
 
               </Picker>
 
-            </View>
+            </View> */}
 
             <View style={style.pickerContainer} >
               <Text style={style.pickerLabel}>District</Text>
@@ -110,7 +110,7 @@ export const FilterModal = (props) => {
 
 
 
-            {props.formData.searchIn == "doctor" &&
+            {props.type == "doctor" &&
               <View style={style.pickerContainer} >
                 <Text style={style.pickerLabel}>Category</Text>
 

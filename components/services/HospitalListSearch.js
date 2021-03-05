@@ -35,7 +35,7 @@ export const HospitalListSearch = (props) => {
 				</View>
 			</View>
 
-			<FilterModal visible={modalOpen} onClose={() => setModalOpen(false)} 
+			<FilterModal visible={modalOpen} onClose={() => setModalOpen(false)} type={props.type}
 				handleInput={props.handleInput} 
 				formData={props.formData} handleSubmit={props.handleSubmit}/>
 
