@@ -1,13 +1,13 @@
 import React from "react"
-import { ActivityIndicator } from "react-native-paper"
-import { Dimensions, StyleSheet, View } from "react-native"
+import {  } from "react-native-paper"
+import { Dimensions, StyleSheet, View, ActivityIndicator } from "react-native"
 
 
 export const OverlayActivityIndicator = (props) => {
 
   return (
-    <View style={style.container}>
-      <ActivityIndicator color="#359d9e" style={{ position: "relative" }} size="large"/>
+    <View style={[style.container, {backgroundColor: props.dropColor || "#fff4"}]}>
+      <ActivityIndicator color="#359d9e" style={[{ position: "relative" }]} size={30}/>
     </View>
   )
 }

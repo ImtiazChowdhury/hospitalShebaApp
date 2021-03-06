@@ -26,7 +26,7 @@ export const HospitalListSearch = (props) => {
 
 				<Searchbar inputStyle={style.input} style={style.searchBar} placeholder="Search" iconColor="#359d9e"
 					value={query} onChangeText={(text) => setQuery(text)} onIconPress={props.handleSubmit} 
-					onSubmitEditing={props.handleSubmit}  />
+					onSubmitEditing={props.handleSubmit}  on/>
 
 				<View style={style.filterIconContainer}>
 					<TouchableOpacity onPress={() => { setModalOpen(true) }}>

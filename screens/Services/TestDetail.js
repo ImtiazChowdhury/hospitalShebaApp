@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react"
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, TouchableOpacity, Linking, Dimensions } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
 import { baseUrl } from "../../config.json"
-import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
+import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
 import HomeCarousel from "../../components/home/Carousel"
 
 export const TestDetail = ({ navigation, route }) => {
 
 	const [loading, setLoading] = useState(true)
-	const [test, setTest] = useState({})
+	const [test, setTest] = useState(null)
 
 	async function loadDoctorDetail() {
 		try {
@@ -37,7 +37,7 @@ export const TestDetail = ({ navigation, route }) => {
 		<SafeAreaView>
 
 			{loading &&
-				<RelativeActivityIndicator />
+				<OverlayActivityIndicator />
 			}
 
 			{test &&

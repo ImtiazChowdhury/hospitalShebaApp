@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { SafeAreaView, StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
 import { Card, Snackbar } from "react-native-paper"
-import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
+import OverlayActivityIndicator from "../../components/OverlayActivityIndicator"
 
 import { baseUrl } from "../../config.json"
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -111,17 +111,18 @@ export const BillList = (props) => {
 				action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
 			>
 				{infoBarText}
-			</Snackbar> 
+			</Snackbar>
 
-			{loading && <RelativeActivityIndicator />}
+			{loading && <OverlayActivityIndicator />}
 			<FlatList
 				data={list}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
-				ListEmptyComponent={() => <View style={style.notFoundMessage} >
-					<Icon name="alert-circle-outline" size={75} color="#5d5d5d" />
-					<Text style={style.notFoundText}>No Bills Found</Text>
-				</View>
+				ListEmptyComponent={() => !loading &&
+					<View style={style.notFoundMessage} >
+						<Icon name="alert-circle-outline" size={75} color="#5d5d5d" />
+						<Text style={style.notFoundText}>No Bills Found</Text> 
+					</View>
 				} />
 
 		</>
@@ -143,7 +144,7 @@ const style = StyleSheet.create({
 		marginBottom: 20
 
 	},
-	
+
 	listCard: {
 		margin: 5,
 		borderWidth: 1,
@@ -166,7 +167,7 @@ const style = StyleSheet.create({
 	titleText: {
 		color: "#359d9e",
 		fontWeight: "bold",
-		fontFamily:"serif",
+		fontFamily: "serif",
 		fontSize: 14,
 	},
 	phone: {
@@ -192,11 +193,11 @@ const style = StyleSheet.create({
 		marginLeft: 2
 
 	},
-	infoContainer:{
-		flexDirection:"row",
-		justifyContent:"space-between",
+	infoContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
 		padding: 5,
-		width:"100%"
+		width: "100%"
 	},
 	textContainer: {
 		width: "50%",

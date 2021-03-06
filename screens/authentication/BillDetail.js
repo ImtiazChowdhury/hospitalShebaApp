@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { SafeAreaView, StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from "react-native"
 import Icon from "react-native-vector-icons/Ionicons"
 import { Card, Snackbar } from "react-native-paper"
-import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
+import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
 
 import { baseUrl } from "../../config.json"
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -68,7 +68,7 @@ export const BillDetail = (props) => {
 				{infoBarText}
 			</Snackbar>
 
-			{loading && <RelativeActivityIndicator />}
+			{loading && <OverlayActivityIndicator />}
 
 			{detail &&
 				<ScrollView>

@@ -5,13 +5,13 @@ import { Card, ActivityIndicator } from "react-native-paper"
 import { baseUrl } from "../../config.json"
 import HospitalListSearch from "../../components/services/HospitalListSearch"
 import { TouchableNativeFeedback } from "react-native-gesture-handler"
-import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
+import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
 import HomeCarousel from "../../components/home/Carousel"
 
 export const HospitalDetail = ({ navigation, route }) => {
 
 	const [loading, setLoading] = useState(true)
-	const [hospital, setHospital] = useState({})
+	const [hospital, setHospital] = useState(null)
 	const [tab, setTab] = useState("Doctor")
 	const [doctorList, setDoctorList] = useState([]);
 	const [testList, setTestList] = useState([]);
@@ -147,7 +147,7 @@ export const HospitalDetail = ({ navigation, route }) => {
 		<SafeAreaView>
 
 			{loading &&
-				<RelativeActivityIndicator />
+				<OverlayActivityIndicator />
 			}
 
 			{hospital &&

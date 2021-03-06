@@ -65,7 +65,7 @@ const DrawerHeader = (props) => {
 
 
         <TouchableOpacity style={style.linkTouch}
-          onPress={() => props.navigation.navigate("Tab", { screen: "Services" })}
+          onPress={() => props.navigation.navigate("Tab", { screen: "Services", params:{screen: "AllServices"} })}
         >
           <Icon style={style.icon} name="category" size={20} />
           <Text style={style.link}>All Services</Text>

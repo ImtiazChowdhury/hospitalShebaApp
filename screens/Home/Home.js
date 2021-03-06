@@ -1,7 +1,6 @@
 import React from "react"
 import { Text, View, ScrollView, StyleSheet, Image, Dimensions, TouchableOpacity, SafeAreaView} from "react-native"
 import HomeCarousel from "../../components/home/Carousel"
-import NearestHospital from "../../components/services/NearestHospital"
 
 
 import hospitalImage from "../../assets/hospital.jpg"

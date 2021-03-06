@@ -69,7 +69,7 @@ export const NearestDoctor = ({ navigation, route }) => {
                 }
                 {loading &&
                     <View style={style.notFoundMessage}>
-                        <ActivityIndicator color="#359d9e" />
+                        <ActivityIndicator color="#359d9e" size="small"/>
                     </View>
                 }
             </View>

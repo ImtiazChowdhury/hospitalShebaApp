@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		borderColor: "#d5d5d5",
 		borderWidth: 1,
-		margin: 2
+		// margin: 2
 	},
 	imgFit: {
 		flex: 1,

@@ -112,7 +112,7 @@ export const BillImage = (props) => {
 		}
 	}
 
-	function reset(){
+	function reset() {
 		setImagePath(null);
 		setDiscountData(null)
 		props.navigation.push("Main");
@@ -121,9 +121,8 @@ export const BillImage = (props) => {
 	return (
 		<>
 
+			{loading && <OverlayActivityIndicator dropColor="#0003" />}
 			<ScrollView style={styles.container}>
-
-				{loading && <OverlayActivityIndicator />}
 
 				<View style={styles.headingContainer}>
 					<Text style={styles.headingTitle}>{props.route.params.hospital.name} </Text>
@@ -169,12 +168,18 @@ export const BillImage = (props) => {
 				<View style={styles.discountInfoContainer}>
 
 					<View style={styles.discountInfo} >
+
 						<Icon name="checkmark-sharp" size={60} color="#359d9e" />
 						<Text style={styles.successHeading} >SUCCESS</Text>
 						<Text style={styles.successText} >
 							Bill Uploaded Successfully, please check out from the counter.
 						</Text>
-						<Text style={styles.code}>{discountData.shortCode}</Text>
+
+						<Text style={styles.code}>
+							<Text style={styles.hashTag} >#</Text>
+							{discountData.shortCode}
+						</Text>
+
 						<View style={{}}>
 							<Text style={styles.discountText}>
 								Discount Amount:  {discountData.discountAmount}%
@@ -354,12 +359,12 @@ const styles = StyleSheet.create({
 		color: "#359d9e",
 		fontSize: 20,
 		fontWeight: "bold",
-		marginBottom: 25
+		marginBottom: 15
 	},
 	successText: {
-		color: "#359d9e",
-		fontSize: 16,
-		marginTop: 10,
+		color: "#5d5d5d",
+		fontSize: 14,
+		marginTop: 0,
 		textAlign: "center",
 		marginBottom: 25,
 		lineHeight: 22
@@ -371,7 +376,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		padding: 5,
 	},
-	modalButtonTouch:{
+	modalButtonTouch: {
 		marginLeft: 20
 	},
 	link: {
@@ -383,15 +388,27 @@ const styles = StyleSheet.create({
 		color: "#5d5d5d",
 		textAlign: "center",
 		lineHeight: 18,
-		fontSize: 14
+		fontSize: 12
 	}
 	,
 	code: {
-		fontSize: 18,
+		fontSize: 20,
 		color: "#359d9e",
 		fontWeight: "bold",
 		fontFamily: "serif",
 		// width: "50%",
-		textAlign:"center"
+		textAlign: "center",
+		marginBottom: 20,
+		
 	},
+	hashTag:{
+		fontSize: 35,
+		fontFamily: "monospace",
+		// marginRight: 10,
+		// width: 40
+		letterSpacing: 5,
+		// color
+		fontWeight: "normal",
+		color: "#319d9e"
+	}
 })

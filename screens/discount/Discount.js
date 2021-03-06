@@ -106,7 +106,7 @@ export const Discount = (props) => {
 				{infoBarText}
 			</Snackbar>
 
-			{loading && <OverlayActivityIndicator />}
+			{loading && <OverlayActivityIndicator dropColor="#0003"/>}
 
 			{hasCameraPermission === null ? (
 				<Text>Requesting for camera permission</Text>
