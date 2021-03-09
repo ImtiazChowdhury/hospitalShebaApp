@@ -34,6 +34,10 @@ export const BillImage = (props) => {
 	useEffect(() => {
 		setImagePath(null);
 	}, [])
+
+	useEffect(()=>{
+		if(!props.route|| !props.route.params || !props.route.params.hospital) props.navigation.goBack()
+	})
 	useEffect(() => {
 		(async () => {
 			if (Platform.OS !== 'web') {
@@ -117,6 +121,13 @@ export const BillImage = (props) => {
 		setDiscountData(null)
 		props.navigation.push("Main");
 	}
+	
+
+	function done(){
+		setImagePath(null);
+		setDiscountData(null)
+		props.navigation.navigate("Home");
+	}
 
 	return (
 		<>
@@ -133,7 +144,7 @@ export const BillImage = (props) => {
 					<View style={styles.buttonContainer}>
 						<TouchableOpacity style={styles.buttonTouch} onPress={openCamera}>
 							<Icon name="image" size={20} color="#fff" />
-							<Text style={styles.buttonText} >Take Image of You Bill</Text>
+							<Text style={styles.buttonText} >Take Image of your Bill</Text>
 						</TouchableOpacity>
 					</View>
 				}
@@ -197,11 +208,11 @@ export const BillImage = (props) => {
 								<Text style={styles.link}>Scan Again</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.modalButtonTouch}
-								onPress={() => { props.navigation.navigate("Home") }}
+								onPress= {done}
 							// onPress={()=>setDiscountData(null)}
 
 							>
-								<Text style={styles.link}>Ok</Text>
+								<Text style={styles.link}>Done</Text>
 							</TouchableOpacity>
 						</View>
 
@@ -382,7 +393,13 @@ const styles = StyleSheet.create({
 	link: {
 		color: "#359d9e",
 		fontWeight: "bold",
-		alignSelf: "flex-end"
+		alignSelf: "flex-end",
+		padding: 4,
+		paddingLeft: 10,
+		paddingRight: 10,
+		borderWidth: 1,
+		borderColor: "#359d9e",
+		borderRadius: 5
 	},
 	discountText: {
 		color: "#5d5d5d",

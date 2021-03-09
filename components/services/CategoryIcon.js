@@ -1,17 +1,19 @@
 import React from 'react'
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native"
 import Icon from "react-native-vector-icons/MaterialIcons"
-import {baseUrl} from "../../config.json"
+import { baseUrl } from "../../config.json"
 
 function CategoryIcon(props) {
     const { name, cover } = props.category
     return (
         <View style={style.iconView}>
             <View style={style.imageView}>
-                {cover && cover.thumbnail && 
-                    <Image source={baseUrl + cover.thumbnail} style={style.image}/>
+
+                {cover && cover.thumbnail && <>
+                    <Image source={{uri: baseUrl + cover.thumbnail}} style={style.image} />
+                    <Text>{console.log(baseUrl + cover.thumbnail)} </Text></>
                 }
-                {!cover && 
+                {!cover &&
                     <Icon name="category" size={30} color="#3333" />
                 }
             </View>
@@ -21,7 +23,7 @@ function CategoryIcon(props) {
 }
 
 const style = StyleSheet.create({
-    iconView:{
+    iconView: {
         padding: 5,
         borderColor: "#359d9e25",
         borderWidth: 1,
@@ -30,19 +32,24 @@ const style = StyleSheet.create({
         width: 100,
         height: 80,
         alignContent: "center",
-        justifyContent:  "center",
+        justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#359d9e05"
     },
-    imageView:{
+    imageView: {
         width: 40,
         height: 40
     },
-    name:{
+    name: {
         color: "#5d5d5d",
         fontFamily: "serif",
         fontSize: 13,
         textAlign: "center"
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        resizeMode: "stretch"
     }
 })
 

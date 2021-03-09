@@ -10,36 +10,39 @@ export const NearestHospital = ({ navigation, route }) => {
 	const [hospitals, setHospitals] = useState([])
 	const [alert, setAlert] = useState(false)
 	const [loading, setLoading] = useState(true)
+	const [loc, setLoc] = useState({
+		coords: { latitude: 24, longitude: 91}
+	});
+
+	useEffect(() => {
+		navigator.geolocation.getCurrentPosition(async loc => {
+			setLoc(loc);
+		})
+
+	}, [])
 
 	function navigateToHospitalList() {
-		if (route.name == "Home") {
-			return navigation.navigate("Services", { screen: "AllServices" })
-		}
-		if (route.name == "AllServices") {
-			return navigation.navigate("HospitalList")
 
-		}
+		return navigation.navigate("HospitalList")
+
 	}
 
 	async function loadNearestHospitals() {
 		try {
 			setLoading(true)
 
-			navigator.geolocation.getCurrentPosition(async loc => {
-				
-				const response = await fetch(baseUrl + "/api/hospital?"
-					+ `latitude=${loc.coords && loc.coords.latitude}`
-					+ `&longitude=${loc.coords && loc.coords.longitude}`
-					+ "&limit=5&sort=distance"
-				)
-				if (response.ok) {
-					const list = await response.json()
-					setHospitals(list.data)
-				} else {
-					setAlert(true)
-				}
-				setLoading(false)
-			})
+			const response = await fetch(baseUrl + "/api/hospital?"
+				+ `latitude=${loc.coords && loc.coords.latitude}`
+				+ `&longitude=${loc.coords && loc.coords.longitude}`
+				+ "&limit=5&sort=distance"
+			)
+			if (response.ok) {
+				const list = await response.json()
+				setHospitals(list.data)
+			} else {
+				setAlert(true)
+			}
+			setLoading(false)
 
 
 		} catch (err) {
@@ -50,7 +53,7 @@ export const NearestHospital = ({ navigation, route }) => {
 	}
 
 
-	useEffect(() => { loadNearestHospitals() }, [])
+	useEffect(() => { loadNearestHospitals(); }, [loc])
 
 	return (
 		<View>
@@ -77,9 +80,9 @@ export const NearestHospital = ({ navigation, route }) => {
 				{hospitals.length > 0 && hospitals.map(i => (
 
 					<Card style={style.hospitalCard} key={i._id}>
-						<TouchableOpacity onPress={()=>navigation.navigate("HospitalDetail", {hospital: i._id})}>
+						<TouchableOpacity onPress={() => navigation.navigate("HospitalDetail", { hospital: i._id })}>
 
-							<Card.Cover style={style.cardImage}  source={i.cover && { uri:baseUrl + i.cover.medium } || HospitalImage} />
+							<Card.Cover style={style.cardImage} source={i.cover && { uri: baseUrl + i.cover.medium } || HospitalImage} />
 							<View>
 								<Text style={style.hospitalName}>{i.name}</Text>
 							</View>
@@ -97,7 +100,7 @@ export const NearestHospital = ({ navigation, route }) => {
 				}
 				{loading &&
 					<View style={style.notFoundMessage}>
-                        <ActivityIndicator color="#359d9e" size="small"/>
+						<ActivityIndicator color="#359d9e" size="small" />
 					</View>
 				}
 			</View>
@@ -118,8 +121,8 @@ const style = StyleSheet.create({
 		justifyContent: "space-around",
 		flexWrap: "wrap",
 	},
-	cardImage:{
-		borderRadius:5,
+	cardImage: {
+		borderRadius: 5,
 		// height:100,
 		// width: 80,
 	},
@@ -142,25 +145,25 @@ const style = StyleSheet.create({
 		textAlign: "center",
 	},
 	titleContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        margin:2,
-        marginTop: 20,
-        padding:2,
-        paddingLeft: 5,
-        paddingRight: 5,
-        // borderColor: "#359d9e55",
-        // borderWidth:1,
-        // borderRadius:5,
-        alignItems:"center",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		margin: 2,
+		marginTop: 20,
+		padding: 2,
+		paddingLeft: 5,
+		paddingRight: 5,
+		// borderColor: "#359d9e55",
+		// borderWidth:1,
+		// borderRadius:5,
+		alignItems: "center",
 		// backgroundColor:"#359d9e22"
 
-    },
-    heading: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#359d9e",
-    },
+	},
+	heading: {
+		fontSize: 16,
+		fontWeight: "600",
+		color: "#359d9e",
+	},
 	seeMoreView: {
 		flexDirection: "row",
 		alignItems: "center",

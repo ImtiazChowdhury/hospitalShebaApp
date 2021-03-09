@@ -24,6 +24,16 @@ export const DoctorList = ({ navigation, route }) => {
 	const [selectedDistrict, setSelectedDistrict] = useState("")
 	const [selectedZone, setSelectedZone] = useState("")
 	const [selectedDiseaseCategory, setDiseaseCategory] = useState(route?.params?.category)
+	const [loc, setLoc] = useState({
+		coords: { latitude: 23.829, longitude: 90.418 }
+	});
+
+	useEffect(() => {
+		navigator.geolocation.getCurrentPosition(async loc => {
+			setLoc(loc);
+		})
+
+	}, [])
 
 	useEffect(() => {
 		if (route.params && route.params.query) {
@@ -54,34 +64,31 @@ export const DoctorList = ({ navigation, route }) => {
 	async function loadDoctorList() {
 		try {
 			setLoading(true)
-			navigator.geolocation.getCurrentPosition(async loc => {
-				let url = baseUrl + "/api/doctor?"
-				url += `latitude=${loc.coords && loc.coords.latitude}`
-				url += `&longitude=${loc.coords && loc.coords.longitude}`
-				url += "&limit=20&resolveDiseaseCategory=1&resolveHospital=1"
-				url += "&page="+page
+			let url = baseUrl + "/api/doctor?"
+			url += `latitude=${loc.coords && loc.coords.latitude}`
+			url += `&longitude=${loc.coords && loc.coords.longitude}`
+			url += "&limit=20&resolveDiseaseCategory=1&resolveHospital=1"
+			url += "&page=" + page
 
-				if (selectedDistrict) {
-					url += "&district=" + selectedDistrict
-				}
-				if (selectedZone) {
-					url += "&zone=" + selectedZone
-				}
-				if (query) {
-					url += "&query=" + query
-				}
-				if (selectedDiseaseCategory) {
-					url += "&diseaseCategory=" + selectedDiseaseCategory
-				}
-				const response = await fetch(url)
+			if (selectedDistrict) {
+				url += "&district=" + selectedDistrict
+			}
+			if (selectedZone) {
+				url += "&zone=" + selectedZone
+			}
+			if (query) {
+				url += "&query=" + query
+			}
+			if (selectedDiseaseCategory) {
+				url += "&diseaseCategory=" + selectedDiseaseCategory
+			}
+			const response = await fetch(url)
 
-				if (response.ok) {
-					const list = await response.json()
-					setHospitals(list.data)
-				}
-				setLoading(false)
-
-			})
+			if (response.ok) {
+				const list = await response.json()
+				setHospitals(list.data)
+			}
+			setLoading(false)
 
 		} catch (err) {
 			console.log(err)
@@ -90,9 +97,9 @@ export const DoctorList = ({ navigation, route }) => {
 	}
 
 
-	useEffect(() => { loadDoctorList() }, [query, selectedZone, selectedDistrict, selectedDiseaseCategory])
+	useEffect(() => { loadDoctorList() }, [query, selectedZone, selectedDistrict, selectedDiseaseCategory, loc])
 
-	async function onRefresh(){
+	async function onRefresh() {
 		setRefreshing(true)
 		await loadDoctorList();
 		setRefreshing(false);
@@ -160,8 +167,8 @@ export const DoctorList = ({ navigation, route }) => {
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
 				style={{ marginBottom: 80 }}
-				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#359d9e"]}/>}
-				
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#359d9e"]} />}
+
 			/>
 			{!loading && !hospitals.length &&
 				<View style={style.notFoundMessage} >
@@ -170,7 +177,7 @@ export const DoctorList = ({ navigation, route }) => {
 
 				</View>
 			}
-			
+
 		</SafeAreaView>
 	)
 }

@@ -22,6 +22,16 @@ export const TestList = ({ navigation, route }) => {
 	const [query, setQuery] = useState("")
 	const [selectedDistrict, setSelectedDistrict] = useState("")
 	const [selectedZone, setSelectedZone] = useState("")
+	const [loc, setLoc] = useState({
+		coords: { latitude: 23.829, longitude: 90.418 }
+	});
+
+	useEffect(() => {
+		navigator.geolocation.getCurrentPosition(async loc => {
+			setLoc(loc);
+		})
+
+	}, [])
 
 	useEffect(()=>{
 		if(route.params && route.params.query) {
@@ -51,7 +61,6 @@ export const TestList = ({ navigation, route }) => {
 	async function loadHospitalList() {
 		try {
 			setLoading(true)
-			navigator.geolocation.getCurrentPosition(async loc => {
 				let url = baseUrl + "/api/service?"
 				url += `latitude=${loc.coords && loc.coords.latitude}`
 				url += `&longitude=${loc.coords && loc.coords.longitude}`
@@ -73,8 +82,6 @@ export const TestList = ({ navigation, route }) => {
 				}
 				setLoading(false)
 
-			})
-
 		} catch (err) {
 			console.log(err)
 			setLoading(false)
@@ -82,7 +89,7 @@ export const TestList = ({ navigation, route }) => {
 	}
 
 
-	useEffect(() => { loadHospitalList() }, [query, selectedZone, selectedDistrict])
+	useEffect(() => { loadHospitalList() }, [query, selectedZone, selectedDistrict, loc])
 
 	async function onRefresh(){
 		setRefreshing(true);

@@ -5,7 +5,6 @@ import { Card, } from "react-native-paper"
 import { baseUrl } from "../../config.json"
 import HospitalListSearch from "../../components/services/HospitalListSearch"
 import { OverlayActivityIndicator } from "../../components/OverlayActivityIndicator"
-import { RelativeActivityIndicator } from "../../components/RelativeActivityIndicator"
 
 export const HospitalList = ({ navigation, route }) => {
 
@@ -24,6 +23,16 @@ export const HospitalList = ({ navigation, route }) => {
 	const [query, setQuery] = useState("")
 	const [selectedDistrict, setSelectedDistrict] = useState("")
 	const [selectedZone, setSelectedZone] = useState("")
+	const [loc, setLoc] = useState({
+		coords: { latitude: 23.829, longitude: 90.418 }
+	});
+
+	useEffect(() => {
+		navigator.geolocation.getCurrentPosition(async loc => {
+			setLoc(loc);
+		})
+
+	}, [])
 
 	useEffect(() => {
 		if (route.params && route.params.query) {
@@ -48,40 +57,36 @@ export const HospitalList = ({ navigation, route }) => {
 			}
 		})
 	}
-	
+
 	async function requestList(page) {
-		return new Promise((resolve, reject) => {
 
-			try {
-				navigator.geolocation.getCurrentPosition(async loc => {
-					let url = baseUrl + "/api/hospital?";
-					url += `latitude=${loc.coords && loc.coords.latitude}`;
-					url += `&longitude=${loc.coords && loc.coords.longitude}`;
-					url += "&limit=6&page=" + page;
-					if (selectedDistrict) {
-						url += "&district=" + selectedDistrict
-					}
-					if (selectedZone) {
-						url += "&zone=" + selectedZone
-					}
-					if (query) {
-						url += "&query=" + query
-					}
-					const response = await fetch(url)
-
-					if (response.ok) {
-						const list = await response.json();
-						resolve(list.data);
-					}
-
-					resolve([])
-				})
-
-			} catch (err) {
-				console.log(err)
-				resolve([])
+		try {
+			let url = baseUrl + "/api/hospital?";
+			url += `latitude=${loc.coords && loc.coords.latitude}`;
+			url += `&longitude=${loc.coords && loc.coords.longitude}`;
+			url += "&limit=6&page=" + page;
+			if (selectedDistrict) {
+				url += "&district=" + selectedDistrict
 			}
-		})
+			if (selectedZone) {
+				url += "&zone=" + selectedZone
+			}
+			if (query) {
+				url += "&query=" + query
+			}
+			const response = await fetch(url)
+
+			if (response.ok) {
+				const list = await response.json();
+				return list.data;
+			}
+
+			return []
+
+		} catch (err) {
+			console.log(err)
+			return []
+		}
 	}
 
 	async function loadHospitalList() {
@@ -100,20 +105,20 @@ export const HospitalList = ({ navigation, route }) => {
 	}
 
 	async function loadMore() {
-		
-		setLoading(true);
-		let data = await requestList(page+1);
 
-		if(data.length){
+		setLoading(true);
+		let data = await requestList(page + 1);
+
+		if (data.length) {
 			setHospitals(prevState => [...prevState, ...data]);
 			setPage(prevState => prevState + 1)
 		}
 
 		setLoading(false);
 	}
-	
 
-	useEffect(() => { loadHospitalList() }, [query, selectedZone, selectedDistrict])
+
+	useEffect(() => { loadHospitalList() }, [query, selectedZone, selectedDistrict, loc])
 
 
 	function renderItem({ item }) {

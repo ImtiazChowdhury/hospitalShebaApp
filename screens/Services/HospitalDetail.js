@@ -157,6 +157,7 @@ export const HospitalDetail = ({ navigation, route }) => {
 						<Text style={style.h_name}>{hospital.name}</Text>
 						<Text style={style.h_address} >{hospital.address}</Text>
 						<Text style={style.h_address} >Phone: {hospital.phone}</Text>
+						<Text style= {style.h_discount}>Available Discount: {hospital.discountAmount}%</Text>
 					</View>
 
 					<View style={style.tabHeadContainer}>
@@ -228,6 +229,12 @@ const style = StyleSheet.create({
 		fontSize: 14,
 		fontFamily: "serif",
 		color: "#5d5d5d"
+	},
+	h_discount: {
+		fontWeight: "bold",
+		fontSize: 15,
+		fontFamily: "serif",
+		color: "#5d5d5d",
 	},
 	h_description: {
 		marginTop: 20,

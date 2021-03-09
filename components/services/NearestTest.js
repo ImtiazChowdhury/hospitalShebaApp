@@ -6,32 +6,37 @@ import Icon from "react-native-vector-icons/Ionicons"
 import TestImage from "../../assets/test2.png"
 
 
-export const NearestTest = ({navigation, route}) => {
+export const NearestTest = ({ navigation, route }) => {
 
     const [doctors, setDoctors] = useState([])
     const [alert, setAlert] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [loc, setLoc] = useState({
+        coords: { latitude: 23.829, longitude: 90.418 }
+    });
 
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(async loc => {
+            setLoc(loc);
+        })
+
+    }, [])
     async function loadNearestHospitals() {
         try {
             setLoading(true);
-            
-            navigator.geolocation.getCurrentPosition(async loc => {
-                const response = await fetch(baseUrl + "/api/service?"
-                    + `latitude=${loc.coords && loc.coords.latitude}`
-                    + `&longitude=${loc.coords && loc.coords.longitude}`
-                    + "&limit=5&sort=distance&resolveHospital=1"
-                )
-                if (response.ok) {
-                    const list = await response.json()
-                    setDoctors(list.data)
-                } else {
-                    setAlert(true)
-                }
-                setLoading(false)
 
-            })
-
+            const response = await fetch(baseUrl + "/api/service?"
+                + `latitude=${loc.coords && loc.coords.latitude}`
+                + `&longitude=${loc.coords && loc.coords.longitude}`
+                + "&limit=5&sort=distance&resolveHospital=1"
+            )
+            if (response.ok) {
+                const list = await response.json()
+                setDoctors(list.data)
+            } else {
+                setAlert(true)
+            }
+            setLoading(false)
 
         } catch (err) {
             console.log(err)
@@ -41,19 +46,19 @@ export const NearestTest = ({navigation, route}) => {
     }
 
 
-    useEffect(() => { loadNearestHospitals() }, [])
+    useEffect(() => { loadNearestHospitals() }, [loc])
 
     return (
         <>
             <Snackbar visible={alert} duration={5000} theme={{ colors: { primary: "#c12127" } }}
-				action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
-                >
+                action={{ label: 'Ok', onPress: () => { setInfoBarVisible(false) } }}
+            >
                 Could not load data
             </Snackbar>
 
             <View style={style.titleContainer}>
                 <Title style={style.heading}>Disgnostic Services</Title>
-                <TouchableOpacity onPress={()=>{navigation.navigate("TestList")}}>
+                <TouchableOpacity onPress={() => { navigation.navigate("TestList") }}>
 
                     <View style={style.seeMoreView}>
                         <Text style={style.seeMoreText}>See More</Text>
@@ -66,8 +71,8 @@ export const NearestTest = ({navigation, route}) => {
                 {doctors.length > 0 && doctors.map(i => (
 
                     <Card style={style.hospitalCard} key={i._id}>
-                        <TouchableOpacity  onPress={()=>navigation.navigate("TestDetail", {test: i._id})}>
-                            <Card.Cover style={style.cardImage}  source={i.cover && { uri:baseUrl + i.cover.medium } || TestImage}/>
+                        <TouchableOpacity onPress={() => navigation.navigate("TestDetail", { test: i._id })}>
+                            <Card.Cover style={style.cardImage} source={i.cover && { uri: baseUrl + i.cover.medium } || TestImage} />
                             <View>
                                 <Text style={style.hospitalName}>{i.name}</Text>
                                 <Text style={style.categoryName}>{i.hospital && i.hospital.name}</Text>
@@ -77,7 +82,7 @@ export const NearestTest = ({navigation, route}) => {
                     </Card>
 
                 ))}
-                
+
                 {!loading && !doctors.length &&
                     <View style={style.notFoundMessage} >
                         <Icon name="alert-circle-outline" size={75} color="#5d5d5d" />
@@ -87,7 +92,7 @@ export const NearestTest = ({navigation, route}) => {
 
                 {loading &&
                     <View style={style.notFoundMessage}>
-                        <ActivityIndicator color="#359d9e" size="small"/>
+                        <ActivityIndicator color="#359d9e" size="small" />
                     </View>
                 }
             </View>
@@ -110,7 +115,7 @@ const style = StyleSheet.create({
     notFoundMessage: {
         alignItems: "center",
         marginTop: 50,
-        marginBottom:50
+        marginBottom: 50
     },
     notFoundText: {
         textAlign: "center",
@@ -160,16 +165,16 @@ const style = StyleSheet.create({
     titleContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin:2,
+        margin: 2,
         marginTop: 20,
-        padding:2,
+        padding: 2,
         paddingLeft: 5,
         paddingRight: 5,
         // borderColor: "#359d9e55",
         // borderWidth:1,
         // borderRadius:5,
-        alignItems:"center",
-		// backgroundColor:"#359d9e22"
+        alignItems: "center",
+        // backgroundColor:"#359d9e22"
 
     },
     heading: {
@@ -179,7 +184,7 @@ const style = StyleSheet.create({
     },
     seeMoreView: {
         flexDirection: "row",
-        alignItems:"center",  
+        alignItems: "center",
     },
     seeMoreText: {
         color: "#359d9e",

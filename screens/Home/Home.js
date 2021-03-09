@@ -1,15 +1,45 @@
-import React from "react"
-import { Text, View, ScrollView, StyleSheet, Image, Dimensions, TouchableOpacity, SafeAreaView} from "react-native"
+import React, {useState,  useEffect} from "react"
+import { Text, View, ScrollView, StyleSheet, Image, Dimensions, TouchableOpacity, SafeAreaView, BackHandler} from "react-native"
 import HomeCarousel from "../../components/home/Carousel"
 
 
-import hospitalImage from "../../assets/hospital.jpg"
+import hospitalImage from "../../assets/hospital.jpg" 
 import testImage from "../../assets/test.jpg"
 import doctorImage from "../../assets/doctor.jpg"
 
 import scanImage from "../../assets/scan.jpg"
 
 export const Home = ({ route, navigation }) => {
+
+	const [backPressCount, setBackPressCount] = useState(0);
+	const [viewCloseDialog, setViewCloseDialog] = useState(false);
+
+	function backAction() {
+		if(!navigation.isFocused()) return false;
+		setBackPressCount(prevState=> prevState + 1)
+		return true;
+	}
+
+	useEffect(()=>{
+		if(backPressCount == 0){
+			setViewCloseDialog(false);	
+		}else if(backPressCount == 1){
+			setTimeout(()=>setBackPressCount(0), 2000)
+			setViewCloseDialog(true)
+		}else{
+			BackHandler.exitApp()
+		}
+	}, [backPressCount])
+
+	useEffect(() => {
+
+		const backHandler = BackHandler.addEventListener(
+			"hardwareBackPress",
+			backAction
+		);
+
+		return () => backHandler.remove();
+	}, []);
 
     const slides=[
         "https://image.freepik.com/free-vector/people-walking-sitting-hospital-building-city-clinic-glass-exterior-flat-vector-illustration-medical-help-emergency-architecture-healthcare-concept_74855-10130.jpg",
@@ -52,7 +82,7 @@ export const Home = ({ route, navigation }) => {
                         </View>
 
                         <View style={style.halfOverlayCard}>
-                            <TouchableOpacity onPress={() => { navigation.navigate("Services", { screen: "DoctorList" }) }}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("Services", { screen: "AllDoctorCategories" }) }}>
 
                                 <Image style={style.overlayImage} source={doctorImage} />
                                 <View style={style.overlayTitleView}>
@@ -73,6 +103,11 @@ export const Home = ({ route, navigation }) => {
                 </View>
 
             </ScrollView>
+            {viewCloseDialog &&
+				<View style={style.closeDialog}>
+					<Text style={style.closeDialogText}>Press again to exit</Text>
+				</View>
+			}
         </SafeAreaView>
     )
 }
@@ -82,6 +117,25 @@ export default Home
 const width = Dimensions.get("window")
 
 const style = StyleSheet.create({
+    closeDialog:{
+		position: "absolute",
+		width: "100%",
+		bottom: 0,
+		alignItems: "center",
+		padding: 10,
+        bottom: 30
+	},
+	closeDialogText:{
+		backgroundColor: "#0008",
+		color: "#fff",
+		// width: "70%",
+		padding: 5,
+		paddingRight: 10,
+		paddingLeft: 10,
+		borderRadius: 10,
+		textAlign: "center"
+
+	},
     overlayContainer: {
         flexDirection: "column",
         flexWrap: "wrap",
