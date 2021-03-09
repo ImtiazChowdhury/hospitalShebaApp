@@ -105,7 +105,6 @@ export const AllDoctorCategories = ({ navigation, route }) => {
             if (response.ok) {
                 const list = await response.json()
                 if(list.data && list.data.length){
-                    console.log(list.data.length, url)
                     setPage(page+1);
                     setList(prevState=> [...prevState, ...list.data])
                 }

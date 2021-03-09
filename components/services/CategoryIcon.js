@@ -9,9 +9,8 @@ function CategoryIcon(props) {
         <View style={style.iconView}>
             <View style={style.imageView}>
 
-                {cover && cover.thumbnail && <>
+                {cover && cover.thumbnail && 
                     <Image source={{uri: baseUrl + cover.thumbnail}} style={style.image} />
-                    <Text>{console.log(baseUrl + cover.thumbnail)} </Text></>
                 }
                 {!cover &&
                     <Icon name="category" size={30} color="#3333" />

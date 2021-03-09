@@ -94,7 +94,6 @@ export const BillImage = (props) => {
 
 			if (response.ok) {
 				const data = await response.json()
-				console.log(data)
 				setDiscountData(data[0]);
 			} else {
 				if (response.status >= 400 && response.status < 500) {
